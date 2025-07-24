@@ -5,12 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
 import { toast } from 'sonner';
-import PersonalInfoStep from './form-steps/PersonalInfoStep';
-import FamilyInfoStep from './form-steps/FamilyInfoStep';
-import ChildrenInfoStep from './form-steps/ChildrenInfoStep';
-import GenerationInfoStep from './form-steps/GenerationInfoStep';
-import ContactInfoStep from './form-steps/ContactInfoStep';
-import DocumentsStep from './form-steps/DocumentsStep';
+import PersonalFamilyStep from './form-steps/PersonalFamilyStep';
+import ContactDocumentsStep from './form-steps/ContactDocumentsStep';
+import ReviewStep from './form-steps/ReviewStep';
 
 export interface FormData {
   // Personal Info
@@ -57,7 +54,7 @@ export interface FormData {
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const totalSteps = 6;
+  const totalSteps = 3;
 
   const [formData, setFormData] = useState<FormData>({
     name: '',
@@ -168,79 +165,79 @@ const MultiStepForm = () => {
   const renderStep = () => {
     switch (currentStep) {
       case 1:
-        return <PersonalInfoStep data={formData} updateData={updateFormData} />;
+        return <PersonalFamilyStep data={formData} updateData={updateFormData} />;
       case 2:
-        return <FamilyInfoStep data={formData} updateData={updateFormData} />;
+        return <ContactDocumentsStep data={formData} updateData={updateFormData} />;
       case 3:
-        return <ChildrenInfoStep data={formData} updateData={updateFormData} />;
-      case 4:
-        return <GenerationInfoStep data={formData} updateData={updateFormData} />;
-      case 5:
-        return <ContactInfoStep data={formData} updateData={updateFormData} />;
-      case 6:
-        return <DocumentsStep data={formData} updateData={updateFormData} />;
+        return <ReviewStep data={formData} updateData={updateFormData} />;
       default:
         return null;
     }
   };
 
   const stepTitles = [
-    'Personal Information',
-    'Family Details',
-    'Children Information',
-    'Generation Details',
-    'Contact Information',
-    'Documents & Photos'
+    'Personal & Family Details',
+    'Contact & Documents',
+    'Review & Submit'
   ];
 
   const progress = (currentStep / totalSteps) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 p-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">User Registration Form</h1>
-          <p className="text-gray-600">Please fill out all the required information</p>
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+            User Registration Form
+          </h1>
+          <p className="text-gray-600 text-lg">Complete your registration in just 3 simple steps</p>
         </div>
 
-        <Card className="shadow-xl">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-            <CardTitle className="text-center text-2xl">
-              Step {currentStep} of {totalSteps}: {stepTitles[currentStep - 1]}
+        <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
+            <CardTitle className="text-center text-3xl font-light">
+              {stepTitles[currentStep - 1]}
             </CardTitle>
-            <Progress value={progress} className="mt-4 bg-white/20" />
+            <div className="flex justify-center items-center gap-4 mt-6">
+              <span className="text-sm opacity-90">Step {currentStep} of {totalSteps}</span>
+              <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-2" />
+              <span className="text-sm opacity-90">{Math.round(progress)}%</span>
+            </div>
           </CardHeader>
           
-          <CardContent className="p-8">
+          <CardContent className="p-8 lg:p-12">
             {renderStep()}
             
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between items-center mt-12 pt-8 border-t">
               <Button
                 onClick={prevStep}
                 disabled={currentStep === 1}
                 variant="outline"
-                className="flex items-center gap-2"
+                size="lg"
+                className="flex items-center gap-2 px-8"
               >
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-5 h-5" />
                 Previous
               </Button>
               
               {currentStep < totalSteps ? (
                 <Button
                   onClick={nextStep}
-                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  size="lg"
+                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8"
                 >
-                  Next
-                  <ChevronRight className="w-4 h-4" />
+                  Next Step
+                  <ChevronRight className="w-5 h-5" />
                 </Button>
               ) : (
                 <Button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+                  size="lg"
+                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8"
                 >
                   {isSubmitting ? 'Submitting...' : 'Submit Form'}
-                  <Send className="w-4 h-4" />
+                  <Send className="w-5 h-5" />
                 </Button>
               )}
             </div>

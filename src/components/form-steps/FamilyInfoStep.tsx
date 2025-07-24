@@ -48,8 +48,8 @@ const FamilyInfoStep: React.FC<FamilyInfoStepProps> = ({ data, updateData }) => 
       {data.hasChildren && (
         <div className="space-y-4">
           <Label className="text-lg font-semibold">How many children do you have?</Label>
-          <div className="flex gap-2">
-            {[1, 2, 3].map((num) => (
+          <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
               <Button
                 key={num}
                 variant={data.childrenCount === num ? 'default' : 'outline'}
