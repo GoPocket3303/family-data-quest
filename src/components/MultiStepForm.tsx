@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Send, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import PersonalFamilyStep from './form-steps/PersonalFamilyStep';
 import ContactDocumentsStep from './form-steps/ContactDocumentsStep';
@@ -54,6 +54,7 @@ export interface FormData {
 const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const totalSteps = 3;
 
   const [formData, setFormData] = useState<FormData>({
@@ -119,38 +120,43 @@ const MultiStepForm = () => {
         }
       });
 
-      const response = await fetch('https://n8n.gopocket.in/webhook/yuvaraj', {
+      const response = await fetch('https://n8n.gopocket.in/webhook-test/yuvaraj', {
         method: 'POST',
         body: formDataToSubmit,
       });
 
       if (response.ok) {
+        setIsSubmitted(true);
         toast.success('Form submitted successfully!');
-        // Reset form
-        setFormData({
-          name: '',
-          age: '',
-          wifeName: '',
-          hasChildren: false,
-          childrenCount: 0,
-          children: [],
-          fatherName: '',
-          motherName: '',
-          grandFatherName: '',
-          grandMotherName: '',
-          hasAdditionalGeneration: false,
-          additionalGeneration: [],
-          cast: '',
-          address: '',
-          mobileNo: '',
-          whatsappNo: '',
-          sameAsWhatsapp: false,
-          mailId: '',
-          documents: [],
-          profilePhoto: null,
-          familyPhoto: null,
-        });
-        setCurrentStep(1);
+        
+        // Reset form after a delay
+        setTimeout(() => {
+          setFormData({
+            name: '',
+            age: '',
+            wifeName: '',
+            hasChildren: false,
+            childrenCount: 0,
+            children: [],
+            fatherName: '',
+            motherName: '',
+            grandFatherName: '',
+            grandMotherName: '',
+            hasAdditionalGeneration: false,
+            additionalGeneration: [],
+            cast: '',
+            address: '',
+            mobileNo: '',
+            whatsappNo: '',
+            sameAsWhatsapp: false,
+            mailId: '',
+            documents: [],
+            profilePhoto: null,
+            familyPhoto: null,
+          });
+          setCurrentStep(1);
+          setIsSubmitted(false);
+        }, 3000);
       } else {
         throw new Error('Failed to submit form');
       }
@@ -182,6 +188,32 @@ const MultiStepForm = () => {
   ];
 
   const progress = (currentStep / totalSteps) * 100;
+
+  // Success message component
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 flex items-center justify-center">
+        <Card className="max-w-2xl w-full shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-12 text-center">
+            <div className="animate-scale-in">
+              <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 animate-pulse" />
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                Registration Successful!
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                Thank you for submitting your registration form. We have received your information successfully.
+              </p>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <p className="text-green-800 font-medium">
+                  Your registration has been processed and you will be contacted shortly.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
@@ -234,10 +266,19 @@ const MultiStepForm = () => {
                   onClick={handleSubmit}
                   disabled={isSubmitting}
                   size="lg"
-                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8"
+                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 min-w-[150px]"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Form'}
-                  <Send className="w-5 h-5" />
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Submit Form
+                      <Send className="w-5 h-5" />
+                    </>
+                  )}
                 </Button>
               )}
             </div>
