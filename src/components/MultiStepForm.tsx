@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -55,6 +55,7 @@ const MultiStepForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [progress, setProgress] = useState(0);
   const totalSteps = 3;
 
   const [formData, setFormData] = useState<FormData>({
@@ -85,6 +86,53 @@ const MultiStepForm = () => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
+  // Calculate progress based on completed fields
+  const calculateProgress = () => {
+    const requiredFields = [
+      'name', 'age', 'fatherName', 'motherName', 'cast', 'address', 'mobileNo', 'whatsappNo', 'mailId'
+    ];
+    
+    let completedFields = 0;
+    let totalFields = requiredFields.length;
+    
+    // Count required fields
+    requiredFields.forEach(field => {
+      if (formData[field as keyof FormData] && formData[field as keyof FormData] !== '') {
+        completedFields++;
+      }
+    });
+    
+    // Add children fields if applicable
+    if (formData.hasChildren) {
+      formData.children.forEach((child, index) => {
+        totalFields += 3; // name, age, gender
+        if (child.name) completedFields++;
+        if (child.age) completedFields++;
+        if (child.gender) completedFields++;
+      });
+    }
+    
+    // Add additional generation fields if applicable
+    if (formData.hasAdditionalGeneration) {
+      formData.additionalGeneration.forEach((gen, index) => {
+        totalFields += 2; // name, relation
+        if (gen.name) completedFields++;
+        if (gen.relation) completedFields++;
+      });
+    }
+    
+    // Add document fields
+    totalFields += 1; // profile photo (required)
+    if (formData.profilePhoto) completedFields++;
+    
+    return (completedFields / totalFields) * 100;
+  };
+
+  useEffect(() => {
+    const newProgress = calculateProgress();
+    setProgress(newProgress);
+  }, [formData]);
+
   const nextStep = () => {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
@@ -103,22 +151,49 @@ const MultiStepForm = () => {
     try {
       const formDataToSubmit = new FormData();
       
-      // Append all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'documents' && Array.isArray(value)) {
-          value.forEach((file, index) => {
-            formDataToSubmit.append(`documents_${index}`, file);
-          });
-        } else if (key === 'profilePhoto' && value) {
-          formDataToSubmit.append('profilePhoto', value);
-        } else if (key === 'familyPhoto' && value) {
-          formDataToSubmit.append('familyPhoto', value);
-        } else if (typeof value === 'object') {
-          formDataToSubmit.append(key, JSON.stringify(value));
-        } else {
-          formDataToSubmit.append(key, value.toString());
-        }
+      // Basic fields
+      formDataToSubmit.append('name', formData.name);
+      formDataToSubmit.append('age', formData.age);
+      formDataToSubmit.append('wifeName', formData.wifeName);
+      formDataToSubmit.append('hasChildren', formData.hasChildren.toString());
+      formDataToSubmit.append('childrenCount', formData.childrenCount.toString());
+      formDataToSubmit.append('fatherName', formData.fatherName);
+      formDataToSubmit.append('motherName', formData.motherName);
+      formDataToSubmit.append('grandFatherName', formData.grandFatherName);
+      formDataToSubmit.append('grandMotherName', formData.grandMotherName);
+      formDataToSubmit.append('hasAdditionalGeneration', formData.hasAdditionalGeneration.toString());
+      formDataToSubmit.append('cast', formData.cast);
+      formDataToSubmit.append('address', formData.address);
+      formDataToSubmit.append('mobileNo', formData.mobileNo);
+      formDataToSubmit.append('whatsappNo', formData.whatsappNo);
+      formDataToSubmit.append('sameAsWhatsapp', formData.sameAsWhatsapp.toString());
+      formDataToSubmit.append('mailId', formData.mailId);
+
+      // Children as individual fields
+      formData.children.forEach((child, index) => {
+        formDataToSubmit.append(`child_${index + 1}_name`, child.name);
+        formDataToSubmit.append(`child_${index + 1}_age`, child.age);
+        formDataToSubmit.append(`child_${index + 1}_gender`, child.gender);
       });
+
+      // Additional generation as individual fields
+      formData.additionalGeneration.forEach((gen, index) => {
+        formDataToSubmit.append(`additional_generation_${index + 1}_name`, gen.name);
+        formDataToSubmit.append(`additional_generation_${index + 1}_relation`, gen.relation);
+      });
+
+      // Documents
+      formData.documents.forEach((file, index) => {
+        formDataToSubmit.append(`document_${index + 1}`, file);
+      });
+
+      if (formData.profilePhoto) {
+        formDataToSubmit.append('profilePhoto', formData.profilePhoto);
+      }
+
+      if (formData.familyPhoto) {
+        formDataToSubmit.append('familyPhoto', formData.familyPhoto);
+      }
 
       const response = await fetch('https://n8n.gopocket.in/webhook-test/yuvaraj', {
         method: 'POST',
@@ -156,6 +231,7 @@ const MultiStepForm = () => {
           });
           setCurrentStep(1);
           setIsSubmitted(false);
+          setProgress(0);
         }, 3000);
       } else {
         throw new Error('Failed to submit form');
@@ -186,8 +262,6 @@ const MultiStepForm = () => {
     'Contact & Documents',
     'Review & Submit'
   ];
-
-  const progress = (currentStep / totalSteps) * 100;
 
   // Success message component
   if (isSubmitted) {
@@ -231,9 +305,12 @@ const MultiStepForm = () => {
               {stepTitles[currentStep - 1]}
             </CardTitle>
             <div className="flex justify-center items-center gap-4 mt-6">
-              <span className="text-sm opacity-90">Step {currentStep} of {totalSteps}</span>
-              <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-2" />
-              <span className="text-sm opacity-90">{Math.round(progress)}%</span>
+              <span className="text-sm opacity-90">Progress</span>
+              <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-3" />
+              <span className="text-sm opacity-90">{Math.round(progress)}% Complete</span>
+            </div>
+            <div className="flex justify-center items-center gap-4 mt-2">
+              <span className="text-xs opacity-75">Step {currentStep} of {totalSteps}</span>
             </div>
           </CardHeader>
           
