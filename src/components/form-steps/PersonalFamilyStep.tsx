@@ -66,7 +66,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium">Full Name *</Label>
+              <Label htmlFor="name" className="text-sm font-medium">Full Name / பெயர் *</Label>
               <Input
                 id="name"
                 value={data.name}
@@ -77,7 +77,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="age" className="text-sm font-medium">Age *</Label>
+              <Label htmlFor="age" className="text-sm font-medium">Age / வயது *</Label>
               <Input
                 id="age"
                 type="number"
@@ -90,12 +90,23 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="wifeName" className="text-sm font-medium">Wife's Name</Label>
+            <Label htmlFor="wifeName" className="text-sm font-medium">Wife's Name / மனைவியின் பெயர்</Label>
             <Input
               id="wifeName"
               value={data.wifeName}
               onChange={(e) => updateData({ wifeName: e.target.value })}
               placeholder="Enter your wife's name"
+              className="h-12"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="cast" className="text-sm font-medium">Community / சமூகம் *</Label>
+            <Input
+              id="cast"
+              value={data.cast}
+              onChange={(e) => updateData({ cast: e.target.value })}
+              placeholder="Enter your community"
               className="h-12"
             />
           </div>
@@ -112,25 +123,25 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
-            <Label className="text-lg font-semibold">Do you have children?</Label>
+            <Label className="text-lg font-semibold">Do you have children? / உங்களுக்கு குழந்தைகள் உள்ளதா?</Label>
             <RadioGroup
               value={data.hasChildren ? 'yes' : 'no'}
               onValueChange={(value) => handleChildrenChange(value === 'yes')}
             >
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="yes" id="yes" />
-                <Label htmlFor="yes">Yes</Label>
+                <Label htmlFor="yes">Yes / ஆம்</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="no" id="no" />
-                <Label htmlFor="no">No</Label>
+                <Label htmlFor="no">No / இல்லை</Label>
               </div>
             </RadioGroup>
           </div>
 
           {data.hasChildren && (
             <div className="space-y-4">
-              <Label className="text-lg font-semibold">How many children do you have?</Label>
+              <Label className="text-lg font-semibold">How many children do you have? / உங்களுக்கு எத்தனை குழந்தைகள்?</Label>
               <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                   <Button
@@ -154,17 +165,17 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-xl">
               <Baby className="w-6 h-6 text-green-600" />
-              Children Details
+              Children Details / குழந்தைகளின் விவரங்கள்
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {data.children.map((child, index) => (
               <div key={index} className="p-6 border rounded-lg bg-gray-50">
-                <h4 className="font-semibold mb-4 text-lg">Child {index + 1}</h4>
+                <h4 className="font-semibold mb-4 text-lg">Child {index + 1} / குழந்தை {index + 1}</h4>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor={`child-name-${index}`}>Name *</Label>
+                    <Label htmlFor={`child-name-${index}`}>Name / பெயர் *</Label>
                     <Input
                       id={`child-name-${index}`}
                       value={child.name}
@@ -175,7 +186,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor={`child-age-${index}`}>Age *</Label>
+                    <Label htmlFor={`child-age-${index}`}>Age / வயது *</Label>
                     <Input
                       id={`child-age-${index}`}
                       type="number"
@@ -187,7 +198,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor={`child-gender-${index}`}>Gender *</Label>
+                    <Label htmlFor={`child-gender-${index}`}>Gender / பால் *</Label>
                     <Select
                       value={child.gender}
                       onValueChange={(value) => updateChildData(index, 'gender', value)}
@@ -196,8 +207,8 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="male">Male</SelectItem>
-                        <SelectItem value="female">Female</SelectItem>
+                        <SelectItem value="male">Male / ஆண்</SelectItem>
+                        <SelectItem value="female">Female / பெண்</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -213,13 +224,13 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <TreePine className="w-6 h-6 text-orange-600" />
-            Family Tree
+            Family Tree / குடும்ப மரம்
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="fatherName">Father's Name *</Label>
+              <Label htmlFor="fatherName">Father's Name / தந்தையின் பெயர் *</Label>
               <Input
                 id="fatherName"
                 value={data.fatherName}
@@ -230,7 +241,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="motherName">Mother's Name *</Label>
+              <Label htmlFor="motherName">Mother's Name / தாயின் பெயர் *</Label>
               <Input
                 id="motherName"
                 value={data.motherName}
@@ -241,7 +252,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="grandFatherName">Grandfather's Name</Label>
+              <Label htmlFor="grandFatherName">Grandfather's Name / தாத்தாவின் பெயர்</Label>
               <Input
                 id="grandFatherName"
                 value={data.grandFatherName}
@@ -252,7 +263,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="grandMotherName">Grandmother's Name</Label>
+              <Label htmlFor="grandMotherName">Grandmother's Name / பாட்டியின் பெயர்</Label>
               <Input
                 id="grandMotherName"
                 value={data.grandMotherName}
@@ -272,7 +283,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                 onChange={(e) => updateData({ hasAdditionalGeneration: e.target.checked })}
                 className="rounded"
               />
-              <Label htmlFor="hasAdditionalGeneration">Add additional generation details</Label>
+              <Label htmlFor="hasAdditionalGeneration">Add additional generation details / கூடுதல் தலைமுறை விவரங்களை சேர்க்கவும்</Label>
             </div>
 
             {data.hasAdditionalGeneration && (
@@ -281,7 +292,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                   <div key={index} className="p-4 border rounded-lg bg-gray-50">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor={`gen-name-${index}`}>Name</Label>
+                        <Label htmlFor={`gen-name-${index}`}>Name / பெயர்</Label>
                         <Input
                           id={`gen-name-${index}`}
                           value={gen.name}
@@ -291,7 +302,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor={`gen-relation-${index}`}>Relation</Label>
+                        <Label htmlFor={`gen-relation-${index}`}>Relation / உறவு</Label>
                         <div className="flex gap-2">
                           <Input
                             id={`gen-relation-${index}`}
@@ -317,7 +328,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                   onClick={addAdditionalGeneration}
                   className="w-full"
                 >
-                  Add Another Generation
+                  Add Another Generation / மற்றொரு தலைமுறையை சேர்க்கவும்
                 </Button>
               </div>
             )}

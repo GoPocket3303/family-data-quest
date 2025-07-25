@@ -89,7 +89,7 @@ const MultiStepForm = () => {
   // Calculate progress based on completed fields
   const calculateProgress = () => {
     const requiredFields = [
-      'name', 'age', 'fatherName', 'motherName', 'cast', 'address', 'mobileNo', 'whatsappNo', 'mailId'
+      'name', 'age', 'cast', 'fatherName', 'motherName', 'address', 'mobileNo', 'whatsappNo', 'mailId'
     ];
     
     let completedFields = 0;
