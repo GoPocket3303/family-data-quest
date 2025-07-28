@@ -58,11 +58,15 @@ export interface FormData {
   grandMothers: Array<{
     name: string;
   }>;
+  greatGrandFatherName: string;
+  greatGrandMotherName: string;
+  greatGrandMothers: Array<{
+    name: string;
+  }>;
   hasAdditionalGeneration: boolean;
   additionalGeneration: Array<{
     name: string;
     relation: string;
-    whatsapp: string;
   }>;
   
   // Contact Info
@@ -108,6 +112,9 @@ const MultiStepForm = () => {
     grandFatherName: '',
     grandMotherName: '',
     grandMothers: [],
+    greatGrandFatherName: '',
+    greatGrandMotherName: '',
+    greatGrandMothers: [],
     hasAdditionalGeneration: false,
     additionalGeneration: [],
     cast: '',
@@ -252,6 +259,8 @@ const MultiStepForm = () => {
       formDataToSubmit.append('motherWhatsapp', formData.motherWhatsapp);
       formDataToSubmit.append('grandFatherName', formData.grandFatherName);
       formDataToSubmit.append('grandMotherName', formData.grandMotherName);
+      formDataToSubmit.append('greatGrandFatherName', formData.greatGrandFatherName);
+      formDataToSubmit.append('greatGrandMotherName', formData.greatGrandMotherName);
       formDataToSubmit.append('hasAdditionalGeneration', formData.hasAdditionalGeneration.toString());
       formDataToSubmit.append('cast', formData.cast);
       formDataToSubmit.append('address', formData.address);
@@ -284,6 +293,11 @@ const MultiStepForm = () => {
         formDataToSubmit.append(`additional_grandmother_${index + 1}_name`, grandmother.name);
       });
 
+      // Great Grandmothers as individual fields
+      formData.greatGrandMothers.forEach((greatGrandmother, index) => {
+        formDataToSubmit.append(`additional_great_grandmother_${index + 1}_name`, greatGrandmother.name);
+      });
+
       // Children as individual fields
       formData.children.forEach((child, index) => {
         formDataToSubmit.append(`child_${index + 1}_name`, child.name);
@@ -299,7 +313,6 @@ const MultiStepForm = () => {
       formData.additionalGeneration.forEach((gen, index) => {
         formDataToSubmit.append(`additional_generation_${index + 1}_name`, gen.name);
         formDataToSubmit.append(`additional_generation_${index + 1}_relation`, gen.relation);
-        formDataToSubmit.append(`additional_generation_${index + 1}_whatsapp`, gen.whatsapp);
       });
 
       // Documents
@@ -347,6 +360,9 @@ const MultiStepForm = () => {
             grandFatherName: '',
             grandMotherName: '',
             grandMothers: [],
+            greatGrandFatherName: '',
+            greatGrandMotherName: '',
+            greatGrandMothers: [],
             hasAdditionalGeneration: false,
             additionalGeneration: [],
             cast: '',
