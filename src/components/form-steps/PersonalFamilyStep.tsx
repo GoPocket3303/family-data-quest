@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -65,13 +64,47 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
 
   const addAdditionalGeneration = () => {
     updateData({
-      additionalGeneration: [...data.additionalGeneration, { name: '', relation: '' }]
+      additionalGeneration: [...data.additionalGeneration, { name: '', relation: '', whatsapp: '' }]
     });
   };
 
   const removeAdditionalGeneration = (index: number) => {
     const newGeneration = data.additionalGeneration.filter((_, i) => i !== index);
     updateData({ additionalGeneration: newGeneration });
+  };
+
+  const updateMotherData = (index: number, field: string, value: string) => {
+    const newMothers = [...data.mothers];
+    newMothers[index] = { ...newMothers[index], [field]: value };
+    updateData({ mothers: newMothers });
+  };
+
+  const addMother = () => {
+    updateData({
+      mothers: [...data.mothers, { name: '', whatsapp: '' }]
+    });
+  };
+
+  const removeMother = (index: number) => {
+    const newMothers = data.mothers.filter((_, i) => i !== index);
+    updateData({ mothers: newMothers });
+  };
+
+  const updateGrandMotherData = (index: number, field: string, value: string) => {
+    const newGrandMothers = [...data.grandMothers];
+    newGrandMothers[index] = { ...newGrandMothers[index], [field]: value };
+    updateData({ grandMothers: newGrandMothers });
+  };
+
+  const addGrandMother = () => {
+    updateData({
+      grandMothers: [...data.grandMothers, { name: '' }]
+    });
+  };
+
+  const removeGrandMother = (index: number) => {
+    const newGrandMothers = data.grandMothers.filter((_, i) => i !== index);
+    updateData({ grandMothers: newGrandMothers });
   };
 
   return (
@@ -509,6 +542,18 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
+              <Label htmlFor="fatherWhatsapp">Father's WhatsApp / தந்தையின் வாட்ஸ்அப் *</Label>
+              <Input
+                id="fatherWhatsapp"
+                type="tel"
+                value={data.fatherWhatsapp}
+                onChange={(e) => updateData({ fatherWhatsapp: e.target.value })}
+                placeholder="Enter father's WhatsApp number"
+                className="h-12"
+              />
+            </div>
+            
+            <div className="space-y-2">
               <Label htmlFor="motherName">Mother's Name / தாயின் பெயர் *</Label>
               <Input
                 id="motherName"
@@ -519,6 +564,76 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
               />
             </div>
             
+            <div className="space-y-2">
+              <Label htmlFor="motherWhatsapp">Mother's WhatsApp / தாயின் வாட்ஸ்அப் *</Label>
+              <Input
+                id="motherWhatsapp"
+                type="tel"
+                value={data.motherWhatsapp}
+                onChange={(e) => updateData({ motherWhatsapp: e.target.value })}
+                placeholder="Enter mother's WhatsApp number"
+                className="h-12"
+              />
+            </div>
+          </div>
+
+          {/* Additional Mothers */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-lg font-semibold">Additional Mothers / கூடுதல் தாய்மார்கள்</Label>
+              <Button
+                variant="outline"
+                onClick={addMother}
+                className="flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Add Mother / தாயை சேர்க்கவும்
+              </Button>
+            </div>
+
+            {data.mothers.map((mother, index) => (
+              <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-semibold">Mother {index + 2} / தாய் {index + 2}</h4>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeMother(index)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`mother-name-${index}`}>Name / பெயர்</Label>
+                    <Input
+                      id={`mother-name-${index}`}
+                      value={mother.name}
+                      onChange={(e) => updateMotherData(index, 'name', e.target.value)}
+                      placeholder="Enter mother's name"
+                      className="h-12"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor={`mother-whatsapp-${index}`}>WhatsApp / வாட்ஸ்அப்</Label>
+                    <Input
+                      id={`mother-whatsapp-${index}`}
+                      type="tel"
+                      value={mother.whatsapp}
+                      onChange={(e) => updateMotherData(index, 'whatsapp', e.target.value)}
+                      placeholder="Enter WhatsApp number"
+                      className="h-12"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="grandFatherName">Grandfather's Name / தாத்தாவின் பெயர்</Label>
               <Input
@@ -542,6 +657,48 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
           </div>
 
+          {/* Additional Grandmothers */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-lg font-semibold">Additional Grandmothers / கூடுதல் பாட்டிகள்</Label>
+              <Button
+                variant="outline"
+                onClick={addGrandMother}
+                className="flex items-center gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Add Grandmother / பாட்டியை சேர்க்கவும்
+              </Button>
+            </div>
+
+            {data.grandMothers.map((grandmother, index) => (
+              <div key={index} className="p-4 border rounded-lg bg-gray-50">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="font-semibold">Grandmother {index + 2} / பாட்டி {index + 2}</h4>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeGrandMother(index)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor={`grandmother-name-${index}`}>Name / பெயர்</Label>
+                  <Input
+                    id={`grandmother-name-${index}`}
+                    value={grandmother.name}
+                    onChange={(e) => updateGrandMotherData(index, 'name', e.target.value)}
+                    placeholder="Enter grandmother's name"
+                    className="h-12"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <input
@@ -558,7 +715,18 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
               <div className="space-y-4">
                 {data.additionalGeneration.map((gen, index) => (
                   <div key={index} className="p-4 border rounded-lg bg-gray-50">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <h4 className="font-semibold">Generation {index + 1} / தலைமுறை {index + 1}</h4>
+                      <Button
+                        variant="outline"
+                        onClick={() => removeAdditionalGeneration(index)}
+                        className="text-red-600 hover:text-red-700"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor={`gen-name-${index}`}>Name / பெயர்</Label>
                         <Input
@@ -571,22 +739,24 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor={`gen-relation-${index}`}>Relation / உறவு</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            id={`gen-relation-${index}`}
-                            value={gen.relation}
-                            onChange={(e) => updateAdditionalGeneration(index, 'relation', e.target.value)}
-                            placeholder="e.g., Great Grandfather"
-                            className="h-12"
-                          />
-                          <Button
-                            variant="outline"
-                            onClick={() => removeAdditionalGeneration(index)}
-                            className="h-12 px-3"
-                          >
-                            Remove
-                          </Button>
-                        </div>
+                        <Input
+                          id={`gen-relation-${index}`}
+                          value={gen.relation}
+                          onChange={(e) => updateAdditionalGeneration(index, 'relation', e.target.value)}
+                          placeholder="e.g., Great Grandfather"
+                          className="h-12"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor={`gen-whatsapp-${index}`}>WhatsApp / வாட்ஸ்அப்</Label>
+                        <Input
+                          id={`gen-whatsapp-${index}`}
+                          type="tel"
+                          value={gen.whatsapp}
+                          onChange={(e) => updateAdditionalGeneration(index, 'whatsapp', e.target.value)}
+                          placeholder="Enter WhatsApp number"
+                          className="h-12"
+                        />
                       </div>
                     </div>
                   </div>

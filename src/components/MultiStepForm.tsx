@@ -46,19 +46,30 @@ export interface FormData {
   
   // Generation Info
   fatherName: string;
+  fatherWhatsapp: string;
   motherName: string;
+  motherWhatsapp: string;
+  mothers: Array<{
+    name: string;
+    whatsapp: string;
+  }>;
   grandFatherName: string;
   grandMotherName: string;
+  grandMothers: Array<{
+    name: string;
+  }>;
   hasAdditionalGeneration: boolean;
   additionalGeneration: Array<{
     name: string;
     relation: string;
+    whatsapp: string;
   }>;
   
   // Contact Info
   cast: string;
   address: string;
   mobileNo: string;
+  additionalMobileNo: string;
   whatsappNo: string;
   sameAsWhatsapp: boolean;
   mailId: string;
@@ -90,14 +101,19 @@ const MultiStepForm = () => {
     childrenCount: 0,
     children: [],
     fatherName: '',
+    fatherWhatsapp: '',
     motherName: '',
+    motherWhatsapp: '',
+    mothers: [],
     grandFatherName: '',
     grandMotherName: '',
+    grandMothers: [],
     hasAdditionalGeneration: false,
     additionalGeneration: [],
     cast: '',
     address: '',
     mobileNo: '',
+    additionalMobileNo: '',
     whatsappNo: '',
     sameAsWhatsapp: false,
     mailId: '',
@@ -231,13 +247,16 @@ const MultiStepForm = () => {
       formDataToSubmit.append('hasChildren', formData.hasChildren.toString());
       formDataToSubmit.append('childrenCount', formData.childrenCount.toString());
       formDataToSubmit.append('fatherName', formData.fatherName);
+      formDataToSubmit.append('fatherWhatsapp', formData.fatherWhatsapp);
       formDataToSubmit.append('motherName', formData.motherName);
+      formDataToSubmit.append('motherWhatsapp', formData.motherWhatsapp);
       formDataToSubmit.append('grandFatherName', formData.grandFatherName);
       formDataToSubmit.append('grandMotherName', formData.grandMotherName);
       formDataToSubmit.append('hasAdditionalGeneration', formData.hasAdditionalGeneration.toString());
       formDataToSubmit.append('cast', formData.cast);
       formDataToSubmit.append('address', formData.address);
       formDataToSubmit.append('mobileNo', formData.mobileNo);
+      formDataToSubmit.append('additionalMobileNo', formData.additionalMobileNo);
       formDataToSubmit.append('whatsappNo', formData.whatsappNo);
       formDataToSubmit.append('sameAsWhatsapp', formData.sameAsWhatsapp.toString());
       formDataToSubmit.append('mailId', formData.mailId);
@@ -252,6 +271,17 @@ const MultiStepForm = () => {
           formDataToSubmit.append(`wife_${index + 1}_companyName`, wife.companyName);
           formDataToSubmit.append(`wife_${index + 1}_designation`, wife.designation);
         }
+      });
+
+      // Mothers as individual fields
+      formData.mothers.forEach((mother, index) => {
+        formDataToSubmit.append(`additional_mother_${index + 1}_name`, mother.name);
+        formDataToSubmit.append(`additional_mother_${index + 1}_whatsapp`, mother.whatsapp);
+      });
+
+      // Grandmothers as individual fields
+      formData.grandMothers.forEach((grandmother, index) => {
+        formDataToSubmit.append(`additional_grandmother_${index + 1}_name`, grandmother.name);
       });
 
       // Children as individual fields
@@ -269,6 +299,7 @@ const MultiStepForm = () => {
       formData.additionalGeneration.forEach((gen, index) => {
         formDataToSubmit.append(`additional_generation_${index + 1}_name`, gen.name);
         formDataToSubmit.append(`additional_generation_${index + 1}_relation`, gen.relation);
+        formDataToSubmit.append(`additional_generation_${index + 1}_whatsapp`, gen.whatsapp);
       });
 
       // Documents
@@ -309,14 +340,19 @@ const MultiStepForm = () => {
             childrenCount: 0,
             children: [],
             fatherName: '',
+            fatherWhatsapp: '',
             motherName: '',
+            motherWhatsapp: '',
+            mothers: [],
             grandFatherName: '',
             grandMotherName: '',
+            grandMothers: [],
             hasAdditionalGeneration: false,
             additionalGeneration: [],
             cast: '',
             address: '',
             mobileNo: '',
+            additionalMobileNo: '',
             whatsappNo: '',
             sameAsWhatsapp: false,
             mailId: '',
