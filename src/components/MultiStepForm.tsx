@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -235,14 +236,24 @@ const MultiStepForm = () => {
     try {
       const formDataToSubmit = new FormData();
       
+      // Basic personal information
       formDataToSubmit.append('name', formData.name);
       formDataToSubmit.append('age', formData.age);
       formDataToSubmit.append('bloodGroup', formData.bloodGroup);
       formDataToSubmit.append('profession', formData.profession);
-      formDataToSubmit.append('businessDescription', formData.businessDescription);
-      formDataToSubmit.append('businessAddress', formData.businessAddress);
-      formDataToSubmit.append('companyName', formData.companyName);
-      formDataToSubmit.append('designation', formData.designation);
+      
+      // Only include business fields if profession is business
+      if (formData.profession === 'business') {
+        formDataToSubmit.append('businessDescription', formData.businessDescription);
+        formDataToSubmit.append('businessAddress', formData.businessAddress);
+      }
+      
+      // Only include company fields if profession is salaried
+      if (formData.profession === 'salaried') {
+        formDataToSubmit.append('companyName', formData.companyName);
+        formDataToSubmit.append('designation', formData.designation);
+      }
+      
       formDataToSubmit.append('hasChildren', formData.hasChildren.toString());
       formDataToSubmit.append('childrenCount', formData.childrenCount.toString());
       formDataToSubmit.append('fatherName', formData.fatherName);
@@ -262,45 +273,80 @@ const MultiStepForm = () => {
       formDataToSubmit.append('sameAsWhatsapp', formData.sameAsWhatsapp.toString());
       formDataToSubmit.append('mailId', formData.mailId);
 
+      // Wife information with conditional fields
       formData.wives.forEach((wife, index) => {
         if (wife.name) {
           formDataToSubmit.append(`wife_${index + 1}_name`, wife.name);
           formDataToSubmit.append(`wife_${index + 1}_occupation`, wife.occupation);
-          formDataToSubmit.append(`wife_${index + 1}_businessDescription`, wife.businessDescription);
-          formDataToSubmit.append(`wife_${index + 1}_businessAddress`, wife.businessAddress);
-          formDataToSubmit.append(`wife_${index + 1}_companyName`, wife.companyName);
-          formDataToSubmit.append(`wife_${index + 1}_designation`, wife.designation);
+          
+          // Only include business fields if wife's occupation is business
+          if (wife.occupation === 'business') {
+            formDataToSubmit.append(`wife_${index + 1}_businessDescription`, wife.businessDescription);
+            formDataToSubmit.append(`wife_${index + 1}_businessAddress`, wife.businessAddress);
+          }
+          
+          // Only include company fields if wife's occupation is salaried
+          if (wife.occupation === 'salaried') {
+            formDataToSubmit.append(`wife_${index + 1}_companyName`, wife.companyName);
+            formDataToSubmit.append(`wife_${index + 1}_designation`, wife.designation);
+          }
         }
       });
 
+      // Additional mothers
       formData.mothers.forEach((mother, index) => {
-        formDataToSubmit.append(`additional_mother_${index + 1}_name`, mother.name);
-        formDataToSubmit.append(`additional_mother_${index + 1}_whatsapp`, mother.whatsapp);
+        if (mother.name) {
+          formDataToSubmit.append(`additional_mother_${index + 1}_name`, mother.name);
+          formDataToSubmit.append(`additional_mother_${index + 1}_whatsapp`, mother.whatsapp);
+        }
       });
 
+      // Additional grandmothers
       formData.grandMothers.forEach((grandmother, index) => {
-        formDataToSubmit.append(`additional_grandmother_${index + 1}_name`, grandmother.name);
+        if (grandmother.name) {
+          formDataToSubmit.append(`additional_grandmother_${index + 1}_name`, grandmother.name);
+        }
       });
 
+      // Additional great grandmothers
       formData.greatGrandMothers.forEach((greatGrandmother, index) => {
-        formDataToSubmit.append(`additional_great_grandmother_${index + 1}_name`, greatGrandmother.name);
+        if (greatGrandmother.name) {
+          formDataToSubmit.append(`additional_great_grandmother_${index + 1}_name`, greatGrandmother.name);
+        }
       });
 
+      // Children information
       formData.children.forEach((child, index) => {
-        formDataToSubmit.append(`child_${index + 1}_name`, child.name);
-        formDataToSubmit.append(`child_${index + 1}_age`, child.age);
-        formDataToSubmit.append(`child_${index + 1}_gender`, child.gender);
-        formDataToSubmit.append(`child_${index + 1}_bloodGroup`, child.bloodGroup);
-        formDataToSubmit.append(`child_${index + 1}_status`, child.status);
-        formDataToSubmit.append(`child_${index + 1}_courseDetails`, child.courseDetails);
-        formDataToSubmit.append(`child_${index + 1}_workDetails`, child.workDetails);
+        if (child.name) {
+          formDataToSubmit.append(`child_${index + 1}_name`, child.name);
+          formDataToSubmit.append(`child_${index + 1}_age`, child.age);
+          formDataToSubmit.append(`child_${index + 1}_gender`, child.gender);
+          formDataToSubmit.append(`child_${index + 1}_bloodGroup`, child.bloodGroup);
+          formDataToSubmit.append(`child_${index + 1}_status`, child.status);
+          
+          // Only include course details if status is studying
+          if (child.status === 'studying' && child.courseDetails) {
+            formDataToSubmit.append(`child_${index + 1}_courseDetails`, child.courseDetails);
+          }
+          
+          // Only include work details if status is working
+          if (child.status === 'working' && child.workDetails) {
+            formDataToSubmit.append(`child_${index + 1}_workDetails`, child.workDetails);
+          }
+        }
       });
 
+      // Additional generation
       formData.additionalGeneration.forEach((gen, index) => {
-        formDataToSubmit.append(`additional_great_grandfather_${index + 2}_name`, gen.name);
-        formDataToSubmit.append(`additional_great_grandmother_${index + 2}_name`, gen.relation);
+        if (gen.name) {
+          formDataToSubmit.append(`additional_great_grandfather_${index + 2}_name`, gen.name);
+        }
+        if (gen.relation) {
+          formDataToSubmit.append(`additional_great_grandmother_${index + 2}_name`, gen.relation);
+        }
       });
 
+      // Documents
       formData.documents.forEach((file, index) => {
         formDataToSubmit.append(`document_${index + 1}`, file);
       });
