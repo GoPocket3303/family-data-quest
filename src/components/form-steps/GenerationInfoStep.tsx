@@ -14,7 +14,7 @@ interface GenerationInfoStepProps {
 
 const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateData }) => {
   const addAdditionalGeneration = () => {
-    const newGeneration = [...data.additionalGeneration, { name: '', relation: '' }];
+    const newGeneration = [...data.additionalGeneration, { name: '', relation: '', whatsapp: '' }];
     updateData({ additionalGeneration: newGeneration });
   };
 
@@ -116,7 +116,7 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor={`person-name-${index}`}>Name</Label>
                     <Input
@@ -134,6 +134,16 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                       value={person.relation}
                       onChange={(e) => updateGenerationData(index, 'relation', e.target.value)}
                       placeholder="e.g., Great Grandfather, Great Grandmother"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor={`person-whatsapp-${index}`}>WhatsApp Number</Label>
+                    <Input
+                      id={`person-whatsapp-${index}`}
+                      value={person.whatsapp}
+                      onChange={(e) => updateGenerationData(index, 'whatsapp', e.target.value)}
+                      placeholder="Enter WhatsApp number"
                     />
                   </div>
                 </div>
