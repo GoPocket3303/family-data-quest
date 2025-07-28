@@ -29,22 +29,6 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
     updateData({ additionalGeneration: newGeneration });
   };
 
-  const addGreatGrandMother = () => {
-    const newGreatGrandMothers = [...data.greatGrandMothers, { name: '' }];
-    updateData({ greatGrandMothers: newGreatGrandMothers });
-  };
-
-  const removeGreatGrandMother = (index: number) => {
-    const newGreatGrandMothers = data.greatGrandMothers.filter((_, i) => i !== index);
-    updateData({ greatGrandMothers: newGreatGrandMothers });
-  };
-
-  const updateGreatGrandMotherData = (index: number, field: string, value: string) => {
-    const newGreatGrandMothers = [...data.greatGrandMothers];
-    newGreatGrandMothers[index] = { ...newGreatGrandMothers[index], [field]: value };
-    updateData({ greatGrandMothers: newGreatGrandMothers });
-  };
-
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -110,49 +94,6 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <Label className="text-lg font-semibold">Additional Great Grandmothers</Label>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={addGreatGrandMother}
-            className="flex items-center gap-2"
-          >
-            <Plus className="w-4 h-4" />
-            Add Great Grandmother
-          </Button>
-        </div>
-
-        {data.greatGrandMothers.map((greatGrandMother, index) => (
-          <div key={index} className="p-4 border rounded-lg bg-gray-50">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="font-medium">Great Grandmother {index + 1}</h4>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => removeGreatGrandMother(index)}
-                className="text-red-500 hover:text-red-700"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor={`greatgrandmother-name-${index}`}>Name</Label>
-              <Input
-                id={`greatgrandmother-name-${index}`}
-                value={greatGrandMother.name}
-                onChange={(e) => updateGreatGrandMotherData(index, 'name', e.target.value)}
-                placeholder="Enter great grandmother's name"
-              />
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <div className="space-y-4">
         <div className="flex items-center space-x-2">
           <Checkbox
             id="hasAdditionalGeneration"
@@ -160,7 +101,7 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
             onCheckedChange={(checked) => updateData({ hasAdditionalGeneration: checked as boolean })}
           />
           <Label htmlFor="hasAdditionalGeneration">
-            I know about previous generations
+            I know about additional generations
           </Label>
         </div>
 
@@ -176,14 +117,14 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                 className="flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Add Person
+                Add Generation
               </Button>
             </div>
 
-            {data.additionalGeneration.map((person, index) => (
+            {data.additionalGeneration.map((generation, index) => (
               <div key={index} className="p-4 border rounded-lg bg-gray-50">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-medium">Person {index + 1}</h4>
+                  <h4 className="font-medium">Generation {index + 2}</h4>
                   <Button
                     type="button"
                     variant="ghost"
@@ -197,22 +138,22 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor={`person-name-${index}`}>Name</Label>
+                    <Label htmlFor={`additional-great-grandfather-${index}`}>Great Grandfather's Name</Label>
                     <Input
-                      id={`person-name-${index}`}
-                      value={person.name}
+                      id={`additional-great-grandfather-${index}`}
+                      value={generation.name}
                       onChange={(e) => updateGenerationData(index, 'name', e.target.value)}
-                      placeholder="Enter person's name"
+                      placeholder="Enter great grandfather's name"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor={`person-relation-${index}`}>Relation</Label>
+                    <Label htmlFor={`additional-great-grandmother-${index}`}>Great Grandmother's Name</Label>
                     <Input
-                      id={`person-relation-${index}`}
-                      value={person.relation}
+                      id={`additional-great-grandmother-${index}`}
+                      value={generation.relation}
                       onChange={(e) => updateGenerationData(index, 'relation', e.target.value)}
-                      placeholder="e.g., Great Great Grandfather, Great Great Grandmother"
+                      placeholder="Enter great grandmother's name"
                     />
                   </div>
                 </div>

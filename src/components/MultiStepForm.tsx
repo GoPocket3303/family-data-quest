@@ -65,8 +65,8 @@ export interface FormData {
   }>;
   hasAdditionalGeneration: boolean;
   additionalGeneration: Array<{
-    name: string;
-    relation: string;
+    name: string; // Great Grandfather's Name
+    relation: string; // Great Grandmother's Name
   }>;
   
   // Contact Info
@@ -133,7 +133,6 @@ const MultiStepForm = () => {
     setFormData(prev => ({ ...prev, ...data }));
   };
 
-  // Calculate progress based on completed fields
   const calculateProgress = () => {
     const requiredFields = [
       'name', 'age', 'bloodGroup', 'profession', 'cast', 'fatherName', 'motherName', 'address', 'mobileNo', 'whatsappNo', 'mailId'
@@ -142,14 +141,12 @@ const MultiStepForm = () => {
     let completedFields = 0;
     let totalFields = requiredFields.length;
     
-    // Count required fields
     requiredFields.forEach(field => {
       if (formData[field as keyof FormData] && formData[field as keyof FormData] !== '') {
         completedFields++;
       }
     });
     
-    // Add profession-specific fields
     if (formData.profession === 'business') {
       totalFields += 2; // businessDescription, businessAddress
       if (formData.businessDescription) completedFields++;
@@ -160,7 +157,6 @@ const MultiStepForm = () => {
       if (formData.designation) completedFields++;
     }
     
-    // Add wife fields
     formData.wives.forEach((wife, index) => {
       if (wife.name) {
         totalFields += 2; // name, occupation
@@ -179,7 +175,6 @@ const MultiStepForm = () => {
       }
     });
     
-    // Add children fields if applicable
     if (formData.hasChildren) {
       formData.children.forEach((child, index) => {
         totalFields += 4; // name, age, gender, bloodGroup
@@ -203,16 +198,14 @@ const MultiStepForm = () => {
       });
     }
     
-    // Add additional generation fields if applicable
     if (formData.hasAdditionalGeneration) {
       formData.additionalGeneration.forEach((gen, index) => {
-        totalFields += 2; // name, relation
+        totalFields += 2; // name (great grandfather), relation (great grandmother)
         if (gen.name) completedFields++;
         if (gen.relation) completedFields++;
       });
     }
     
-    // Add document fields
     totalFields += 1; // profile photo (required)
     if (formData.profilePhoto) completedFields++;
     
@@ -242,7 +235,6 @@ const MultiStepForm = () => {
     try {
       const formDataToSubmit = new FormData();
       
-      // Basic fields
       formDataToSubmit.append('name', formData.name);
       formDataToSubmit.append('age', formData.age);
       formDataToSubmit.append('bloodGroup', formData.bloodGroup);
@@ -270,7 +262,6 @@ const MultiStepForm = () => {
       formDataToSubmit.append('sameAsWhatsapp', formData.sameAsWhatsapp.toString());
       formDataToSubmit.append('mailId', formData.mailId);
 
-      // Wives as individual fields
       formData.wives.forEach((wife, index) => {
         if (wife.name) {
           formDataToSubmit.append(`wife_${index + 1}_name`, wife.name);
@@ -282,23 +273,19 @@ const MultiStepForm = () => {
         }
       });
 
-      // Mothers as individual fields
       formData.mothers.forEach((mother, index) => {
         formDataToSubmit.append(`additional_mother_${index + 1}_name`, mother.name);
         formDataToSubmit.append(`additional_mother_${index + 1}_whatsapp`, mother.whatsapp);
       });
 
-      // Grandmothers as individual fields
       formData.grandMothers.forEach((grandmother, index) => {
         formDataToSubmit.append(`additional_grandmother_${index + 1}_name`, grandmother.name);
       });
 
-      // Great Grandmothers as individual fields
       formData.greatGrandMothers.forEach((greatGrandmother, index) => {
         formDataToSubmit.append(`additional_great_grandmother_${index + 1}_name`, greatGrandmother.name);
       });
 
-      // Children as individual fields
       formData.children.forEach((child, index) => {
         formDataToSubmit.append(`child_${index + 1}_name`, child.name);
         formDataToSubmit.append(`child_${index + 1}_age`, child.age);
@@ -309,13 +296,11 @@ const MultiStepForm = () => {
         formDataToSubmit.append(`child_${index + 1}_workDetails`, child.workDetails);
       });
 
-      // Additional generation as individual fields
       formData.additionalGeneration.forEach((gen, index) => {
-        formDataToSubmit.append(`additional_generation_${index + 1}_name`, gen.name);
-        formDataToSubmit.append(`additional_generation_${index + 1}_relation`, gen.relation);
+        formDataToSubmit.append(`additional_great_grandfather_${index + 2}_name`, gen.name);
+        formDataToSubmit.append(`additional_great_grandmother_${index + 2}_name`, gen.relation);
       });
 
-      // Documents
       formData.documents.forEach((file, index) => {
         formDataToSubmit.append(`document_${index + 1}`, file);
       });
@@ -337,7 +322,6 @@ const MultiStepForm = () => {
         setIsSubmitted(true);
         toast.success('Form submitted successfully!');
         
-        // Reset form after a delay
         setTimeout(() => {
           setFormData({
             name: '',
@@ -410,7 +394,6 @@ const MultiStepForm = () => {
     'Review & Submit'
   ];
 
-  // Success message component
   if (isSubmitted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 flex items-center justify-center">
