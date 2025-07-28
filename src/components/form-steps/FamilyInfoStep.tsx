@@ -15,13 +15,13 @@ const FamilyInfoStep: React.FC<FamilyInfoStepProps> = ({ data, updateData }) => 
     updateData({ 
       hasChildren, 
       childrenCount: hasChildren ? 1 : 0,
-      children: hasChildren ? [{ name: '', age: '', gender: '' }] : []
+      children: hasChildren ? [{ name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '' }] : []
     });
   };
 
   const handleChildrenCountChange = (count: number) => {
     const newChildren = Array.from({ length: count }, (_, i) => 
-      data.children[i] || { name: '', age: '', gender: '' }
+      data.children[i] || { name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '' }
     );
     updateData({ childrenCount: count, children: newChildren });
   };

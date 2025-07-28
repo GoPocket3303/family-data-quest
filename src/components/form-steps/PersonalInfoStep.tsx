@@ -36,17 +36,6 @@ const PersonalInfoStep: React.FC<PersonalInfoStepProps> = ({ data, updateData })
           />
         </div>
       </div>
-      
-      <div className="space-y-2">
-        <Label htmlFor="wifeName">Wife's Name</Label>
-        <Input
-          id="wifeName"
-          value={data.wifeName}
-          onChange={(e) => updateData({ wifeName: e.target.value })}
-          placeholder="Enter your wife's name"
-          className="focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
     </div>
   );
 };
