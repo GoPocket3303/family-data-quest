@@ -64,7 +64,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
 
   const addAdditionalGeneration = () => {
     updateData({
-      additionalGeneration: [...data.additionalGeneration, { name: '', relation: '', whatsapp: '' }]
+      additionalGeneration: [...data.additionalGeneration, { name: '', relation: '' }]
     });
   };
 
@@ -726,7 +726,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                       </Button>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <Label htmlFor={`gen-name-${index}`}>Name / பெயர்</Label>
                         <Input
@@ -744,17 +744,6 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                           value={gen.relation}
                           onChange={(e) => updateAdditionalGeneration(index, 'relation', e.target.value)}
                           placeholder="e.g., Great Grandfather"
-                          className="h-12"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor={`gen-whatsapp-${index}`}>WhatsApp / வாட்ஸ்அப்</Label>
-                        <Input
-                          id={`gen-whatsapp-${index}`}
-                          type="tel"
-                          value={gen.whatsapp}
-                          onChange={(e) => updateAdditionalGeneration(index, 'whatsapp', e.target.value)}
-                          placeholder="Enter WhatsApp number"
                           className="h-12"
                         />
                       </div>
