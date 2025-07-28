@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, User, Users, Baby, TreePine, Phone, Mail, Upload } from 'lucide-react';
+import { CheckCircle, User, Users, Baby, TreePine, Phone, Mail, Upload, Heart } from 'lucide-react';
 import { FormData } from '../MultiStepForm';
 
 interface ReviewStepProps {
@@ -37,9 +37,96 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data }) => {
             <p className="text-gray-600">{data.age || 'Not provided'}</p>
           </div>
           <div>
-            <span className="font-medium">Wife's Name:</span>
-            <p className="text-gray-600">{data.wifeName || 'Not provided'}</p>
+            <span className="font-medium">Blood Group:</span>
+            <p className="text-gray-600">{data.bloodGroup || 'Not provided'}</p>
           </div>
+          <div>
+            <span className="font-medium">Profession:</span>
+            <p className="text-gray-600">{data.profession || 'Not provided'}</p>
+          </div>
+          {data.profession === 'business' && (
+            <>
+              <div>
+                <span className="font-medium">Business Description:</span>
+                <p className="text-gray-600">{data.businessDescription || 'Not provided'}</p>
+              </div>
+              <div>
+                <span className="font-medium">Business Address:</span>
+                <p className="text-gray-600">{data.businessAddress || 'Not provided'}</p>
+              </div>
+            </>
+          )}
+          {data.profession === 'salaried' && (
+            <>
+              <div>
+                <span className="font-medium">Company Name:</span>
+                <p className="text-gray-600">{data.companyName || 'Not provided'}</p>
+              </div>
+              <div>
+                <span className="font-medium">Designation:</span>
+                <p className="text-gray-600">{data.designation || 'Not provided'}</p>
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Wife Information */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Heart className="w-5 h-5 text-pink-600" />
+            Wife Information
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {data.wives.map((wife, index) => (
+            wife.name && (
+              <div key={index} className="p-4 bg-gray-50 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Heart className="w-4 h-4 text-pink-600" />
+                  <span className="font-medium">Wife {index + 1}</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <div>
+                    <span className="font-medium">Name:</span>
+                    <p className="text-gray-600">{wife.name}</p>
+                  </div>
+                  <div>
+                    <span className="font-medium">Occupation:</span>
+                    <p className="text-gray-600">{wife.occupation || 'Not provided'}</p>
+                  </div>
+                  {wife.occupation === 'business' && (
+                    <>
+                      <div>
+                        <span className="font-medium">Business Description:</span>
+                        <p className="text-gray-600">{wife.businessDescription || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium">Business Address:</span>
+                        <p className="text-gray-600">{wife.businessAddress || 'Not provided'}</p>
+                      </div>
+                    </>
+                  )}
+                  {wife.occupation === 'salaried' && (
+                    <>
+                      <div>
+                        <span className="font-medium">Company Name:</span>
+                        <p className="text-gray-600">{wife.companyName || 'Not provided'}</p>
+                      </div>
+                      <div>
+                        <span className="font-medium">Designation:</span>
+                        <p className="text-gray-600">{wife.designation || 'Not provided'}</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+            )
+          ))}
+          {!data.wives.some(wife => wife.name) && (
+            <p className="text-gray-500 italic">No wife information provided</p>
+          )}
         </CardContent>
       </Card>
 
@@ -74,9 +161,33 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data }) => {
                       <Baby className="w-4 h-4 text-green-600" />
                       <span className="font-medium">Child {index + 1}</span>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      {child.name} • {child.age} years old • {child.gender}
-                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                      <p className="text-gray-600">
+                        <span className="font-medium">Name:</span> {child.name}
+                      </p>
+                      <p className="text-gray-600">
+                        <span className="font-medium">Age:</span> {child.age} years old
+                      </p>
+                      <p className="text-gray-600">
+                        <span className="font-medium">Gender:</span> {child.gender}
+                      </p>
+                      <p className="text-gray-600">
+                        <span className="font-medium">Blood Group:</span> {child.bloodGroup || 'Not provided'}
+                      </p>
+                      <p className="text-gray-600">
+                        <span className="font-medium">Status:</span> {child.status || 'Not provided'}
+                      </p>
+                      {child.status === 'studying' && child.courseDetails && (
+                        <p className="text-gray-600">
+                          <span className="font-medium">Course Details:</span> {child.courseDetails}
+                        </p>
+                      )}
+                      {child.status === 'working' && child.workDetails && (
+                        <p className="text-gray-600">
+                          <span className="font-medium">Work Details:</span> {child.workDetails}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
