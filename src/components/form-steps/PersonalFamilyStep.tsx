@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Users, Baby, TreePine } from 'lucide-react';
+import { User, Users, Baby, TreePine, Plus, X } from 'lucide-react';
 import { FormData } from '../MultiStepForm';
 
 interface PersonalFamilyStepProps {
@@ -15,17 +15,19 @@ interface PersonalFamilyStepProps {
 }
 
 const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateData }) => {
+  const bloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  
   const handleChildrenChange = (hasChildren: boolean) => {
     updateData({ 
       hasChildren, 
       childrenCount: hasChildren ? 1 : 0,
-      children: hasChildren ? [{ name: '', age: '', gender: '' }] : []
+      children: hasChildren ? [{ name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '' }] : []
     });
   };
 
   const handleChildrenCountChange = (count: number) => {
     const newChildren = Array.from({ length: count }, (_, i) => 
-      data.children[i] || { name: '', age: '', gender: '' }
+      data.children[i] || { name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '' }
     );
     updateData({ childrenCount: count, children: newChildren });
   };
@@ -34,6 +36,25 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
     const newChildren = [...data.children];
     newChildren[index] = { ...newChildren[index], [field]: value };
     updateData({ children: newChildren });
+  };
+
+  const updateWifeData = (index: number, field: string, value: string) => {
+    const newWives = [...data.wives];
+    newWives[index] = { ...newWives[index], [field]: value };
+    updateData({ wives: newWives });
+  };
+
+  const addWife = () => {
+    updateData({
+      wives: [...data.wives, { name: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }]
+    });
+  };
+
+  const removeWife = (index: number) => {
+    if (data.wives.length > 1) {
+      const newWives = data.wives.filter((_, i) => i !== index);
+      updateData({ wives: newWives });
+    }
   };
 
   const updateAdditionalGeneration = (index: number, field: string, value: string) => {
@@ -60,7 +81,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <User className="w-6 h-6 text-blue-600" />
-            Personal Information
+            Personal Information / தனிப்பட்ட தகவல்
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -88,17 +109,85 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
               />
             </div>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="wifeName" className="text-sm font-medium">Wife's Name / மனைவியின் பெயர்</Label>
-            <Input
-              id="wifeName"
-              value={data.wifeName}
-              onChange={(e) => updateData({ wifeName: e.target.value })}
-              placeholder="Enter your wife's name"
-              className="h-12"
-            />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="bloodGroup" className="text-sm font-medium">Blood Group / இரத்த வகை *</Label>
+              <Select value={data.bloodGroup} onValueChange={(value) => updateData({ bloodGroup: value })}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Select blood group" />
+                </SelectTrigger>
+                <SelectContent>
+                  {bloodGroups.map((group) => (
+                    <SelectItem key={group} value={group}>{group}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="profession" className="text-sm font-medium">Profession / தொழில் *</Label>
+              <Select value={data.profession} onValueChange={(value) => updateData({ profession: value })}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Select profession" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="business">Business / வணிகம்</SelectItem>
+                  <SelectItem value="salaried">Salaried / சம்பளம்</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
+
+          {data.profession === 'business' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="businessDescription" className="text-sm font-medium">Business Description / வணிக விவரம் *</Label>
+                <Input
+                  id="businessDescription"
+                  value={data.businessDescription}
+                  onChange={(e) => updateData({ businessDescription: e.target.value })}
+                  placeholder="Enter business description"
+                  className="h-12"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="businessAddress" className="text-sm font-medium">Business Address / வணிக முகவரி *</Label>
+                <Input
+                  id="businessAddress"
+                  value={data.businessAddress}
+                  onChange={(e) => updateData({ businessAddress: e.target.value })}
+                  placeholder="Enter business address"
+                  className="h-12"
+                />
+              </div>
+            </div>
+          )}
+
+          {data.profession === 'salaried' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="companyName" className="text-sm font-medium">Company Name / நிறுவன பெயர் *</Label>
+                <Input
+                  id="companyName"
+                  value={data.companyName}
+                  onChange={(e) => updateData({ companyName: e.target.value })}
+                  placeholder="Enter company name"
+                  className="h-12"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="designation" className="text-sm font-medium">Designation / பதவி *</Label>
+                <Input
+                  id="designation"
+                  value={data.designation}
+                  onChange={(e) => updateData({ designation: e.target.value })}
+                  placeholder="Enter designation"
+                  className="h-12"
+                />
+              </div>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="cast" className="text-sm font-medium">Community / சமூகம் *</Label>
@@ -113,12 +202,130 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
         </CardContent>
       </Card>
 
+      {/* Wife Information */}
+      <Card className="border-l-4 border-l-pink-500">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-xl">
+            <User className="w-6 h-6 text-pink-600" />
+            Wife Information / மனைவி தகவல்
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {data.wives.map((wife, index) => (
+            <div key={index} className="p-6 border rounded-lg bg-gray-50">
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="font-semibold text-lg">Wife {index + 1} / மனைவி {index + 1}</h4>
+                {data.wives.length > 1 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeWife(index)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor={`wife-name-${index}`}>Name / பெயர்</Label>
+                  <Input
+                    id={`wife-name-${index}`}
+                    value={wife.name}
+                    onChange={(e) => updateWifeData(index, 'name', e.target.value)}
+                    placeholder="Enter wife's name"
+                    className="h-12"
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor={`wife-occupation-${index}`}>Occupation / தொழில்</Label>
+                  <Select
+                    value={wife.occupation}
+                    onValueChange={(value) => updateWifeData(index, 'occupation', value)}
+                  >
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Select occupation" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="housewife">Housewife / இல்லத்தரசி</SelectItem>
+                      <SelectItem value="business">Business / வணிகம்</SelectItem>
+                      <SelectItem value="salaried">Salaried / சம்பளம்</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {wife.occupation === 'business' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`wife-business-desc-${index}`}>Business Description / வணிக விவரம்</Label>
+                    <Input
+                      id={`wife-business-desc-${index}`}
+                      value={wife.businessDescription}
+                      onChange={(e) => updateWifeData(index, 'businessDescription', e.target.value)}
+                      placeholder="Enter business description"
+                      className="h-12"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`wife-business-address-${index}`}>Business Address / வணிக முகவரி</Label>
+                    <Input
+                      id={`wife-business-address-${index}`}
+                      value={wife.businessAddress}
+                      onChange={(e) => updateWifeData(index, 'businessAddress', e.target.value)}
+                      placeholder="Enter business address"
+                      className="h-12"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {wife.occupation === 'salaried' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`wife-company-${index}`}>Company Name / நிறுவன பெயர்</Label>
+                    <Input
+                      id={`wife-company-${index}`}
+                      value={wife.companyName}
+                      onChange={(e) => updateWifeData(index, 'companyName', e.target.value)}
+                      placeholder="Enter company name"
+                      className="h-12"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor={`wife-designation-${index}`}>Designation / பதவி</Label>
+                    <Input
+                      id={`wife-designation-${index}`}
+                      value={wife.designation}
+                      onChange={(e) => updateWifeData(index, 'designation', e.target.value)}
+                      placeholder="Enter designation"
+                      className="h-12"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          
+          <Button
+            variant="outline"
+            onClick={addWife}
+            className="w-full flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" />
+            Add Another Wife / மற்றொரு மனைவியை சேர்க்கவும்
+          </Button>
+        </CardContent>
+      </Card>
+
       {/* Family Information */}
       <Card className="border-l-4 border-l-purple-500">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl">
             <Users className="w-6 h-6 text-purple-600" />
-            Family Information
+            Family Information / குடும்ப தகவல்
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -173,7 +380,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
               <div key={index} className="p-6 border rounded-lg bg-gray-50">
                 <h4 className="font-semibold mb-4 text-lg">Child {index + 1} / குழந்தை {index + 1}</h4>
                 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div className="space-y-2">
                     <Label htmlFor={`child-name-${index}`}>Name / பெயர் *</Label>
                     <Input
@@ -196,7 +403,9 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                       className="h-12"
                     />
                   </div>
-                  
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                   <div className="space-y-2">
                     <Label htmlFor={`child-gender-${index}`}>Gender / பால் *</Label>
                     <Select
@@ -212,7 +421,66 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                       </SelectContent>
                     </Select>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`child-blood-group-${index}`}>Blood Group / இரத்த வகை *</Label>
+                    <Select
+                      value={child.bloodGroup}
+                      onValueChange={(value) => updateChildData(index, 'bloodGroup', value)}
+                    >
+                      <SelectTrigger className="h-12">
+                        <SelectValue placeholder="Select blood group" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bloodGroups.map((group) => (
+                          <SelectItem key={group} value={group}>{group}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor={`child-status-${index}`}>Status / நிலைமை</Label>
+                  <Select
+                    value={child.status}
+                    onValueChange={(value) => updateChildData(index, 'status', value)}
+                  >
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="studying">Studying / படிக்கிறது</SelectItem>
+                      <SelectItem value="working">Working / வேலை செய்கிறது</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {child.status === 'studying' && (
+                  <div className="space-y-2 mt-4">
+                    <Label htmlFor={`child-course-${index}`}>Course Details / பாடநெறி விவரங்கள்</Label>
+                    <Input
+                      id={`child-course-${index}`}
+                      value={child.courseDetails}
+                      onChange={(e) => updateChildData(index, 'courseDetails', e.target.value)}
+                      placeholder="Enter course details"
+                      className="h-12"
+                    />
+                  </div>
+                )}
+
+                {child.status === 'working' && (
+                  <div className="space-y-2 mt-4">
+                    <Label htmlFor={`child-work-${index}`}>Work Details / வேலை விவரங்கள்</Label>
+                    <Input
+                      id={`child-work-${index}`}
+                      value={child.workDetails}
+                      onChange={(e) => updateChildData(index, 'workDetails', e.target.value)}
+                      placeholder="Enter work details"
+                      className="h-12"
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </CardContent>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +12,22 @@ export interface FormData {
   // Personal Info
   name: string;
   age: string;
-  wifeName: string;
+  bloodGroup: string;
+  profession: string;
+  businessDescription: string;
+  businessAddress: string;
+  companyName: string;
+  designation: string;
+  
+  // Wife Info
+  wives: Array<{
+    name: string;
+    occupation: string;
+    businessDescription: string;
+    businessAddress: string;
+    companyName: string;
+    designation: string;
+  }>;
   
   // Family Info
   hasChildren: boolean;
@@ -24,6 +38,10 @@ export interface FormData {
     name: string;
     age: string;
     gender: string;
+    bloodGroup: string;
+    status: string;
+    courseDetails: string;
+    workDetails: string;
   }>;
   
   // Generation Info
@@ -61,7 +79,13 @@ const MultiStepForm = () => {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     age: '',
-    wifeName: '',
+    bloodGroup: '',
+    profession: '',
+    businessDescription: '',
+    businessAddress: '',
+    companyName: '',
+    designation: '',
+    wives: [{ name: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
     hasChildren: false,
     childrenCount: 0,
     children: [],
@@ -89,7 +113,7 @@ const MultiStepForm = () => {
   // Calculate progress based on completed fields
   const calculateProgress = () => {
     const requiredFields = [
-      'name', 'age', 'cast', 'fatherName', 'motherName', 'address', 'mobileNo', 'whatsappNo', 'mailId'
+      'name', 'age', 'bloodGroup', 'profession', 'cast', 'fatherName', 'motherName', 'address', 'mobileNo', 'whatsappNo', 'mailId'
     ];
     
     let completedFields = 0;
@@ -102,13 +126,57 @@ const MultiStepForm = () => {
       }
     });
     
+    // Add profession-specific fields
+    if (formData.profession === 'business') {
+      totalFields += 2; // businessDescription, businessAddress
+      if (formData.businessDescription) completedFields++;
+      if (formData.businessAddress) completedFields++;
+    } else if (formData.profession === 'salaried') {
+      totalFields += 2; // companyName, designation
+      if (formData.companyName) completedFields++;
+      if (formData.designation) completedFields++;
+    }
+    
+    // Add wife fields
+    formData.wives.forEach((wife, index) => {
+      if (wife.name) {
+        totalFields += 2; // name, occupation
+        completedFields++;
+        if (wife.occupation) completedFields++;
+        
+        if (wife.occupation === 'business') {
+          totalFields += 2; // businessDescription, businessAddress
+          if (wife.businessDescription) completedFields++;
+          if (wife.businessAddress) completedFields++;
+        } else if (wife.occupation === 'salaried') {
+          totalFields += 2; // companyName, designation
+          if (wife.companyName) completedFields++;
+          if (wife.designation) completedFields++;
+        }
+      }
+    });
+    
     // Add children fields if applicable
     if (formData.hasChildren) {
       formData.children.forEach((child, index) => {
-        totalFields += 3; // name, age, gender
+        totalFields += 4; // name, age, gender, bloodGroup
         if (child.name) completedFields++;
         if (child.age) completedFields++;
         if (child.gender) completedFields++;
+        if (child.bloodGroup) completedFields++;
+        
+        if (child.status) {
+          totalFields += 1;
+          completedFields++;
+          
+          if (child.status === 'studying' && child.courseDetails) {
+            totalFields += 1;
+            completedFields++;
+          } else if (child.status === 'working' && child.workDetails) {
+            totalFields += 1;
+            completedFields++;
+          }
+        }
       });
     }
     
@@ -154,7 +222,12 @@ const MultiStepForm = () => {
       // Basic fields
       formDataToSubmit.append('name', formData.name);
       formDataToSubmit.append('age', formData.age);
-      formDataToSubmit.append('wifeName', formData.wifeName);
+      formDataToSubmit.append('bloodGroup', formData.bloodGroup);
+      formDataToSubmit.append('profession', formData.profession);
+      formDataToSubmit.append('businessDescription', formData.businessDescription);
+      formDataToSubmit.append('businessAddress', formData.businessAddress);
+      formDataToSubmit.append('companyName', formData.companyName);
+      formDataToSubmit.append('designation', formData.designation);
       formDataToSubmit.append('hasChildren', formData.hasChildren.toString());
       formDataToSubmit.append('childrenCount', formData.childrenCount.toString());
       formDataToSubmit.append('fatherName', formData.fatherName);
@@ -169,11 +242,27 @@ const MultiStepForm = () => {
       formDataToSubmit.append('sameAsWhatsapp', formData.sameAsWhatsapp.toString());
       formDataToSubmit.append('mailId', formData.mailId);
 
+      // Wives as individual fields
+      formData.wives.forEach((wife, index) => {
+        if (wife.name) {
+          formDataToSubmit.append(`wife_${index + 1}_name`, wife.name);
+          formDataToSubmit.append(`wife_${index + 1}_occupation`, wife.occupation);
+          formDataToSubmit.append(`wife_${index + 1}_businessDescription`, wife.businessDescription);
+          formDataToSubmit.append(`wife_${index + 1}_businessAddress`, wife.businessAddress);
+          formDataToSubmit.append(`wife_${index + 1}_companyName`, wife.companyName);
+          formDataToSubmit.append(`wife_${index + 1}_designation`, wife.designation);
+        }
+      });
+
       // Children as individual fields
       formData.children.forEach((child, index) => {
         formDataToSubmit.append(`child_${index + 1}_name`, child.name);
         formDataToSubmit.append(`child_${index + 1}_age`, child.age);
         formDataToSubmit.append(`child_${index + 1}_gender`, child.gender);
+        formDataToSubmit.append(`child_${index + 1}_bloodGroup`, child.bloodGroup);
+        formDataToSubmit.append(`child_${index + 1}_status`, child.status);
+        formDataToSubmit.append(`child_${index + 1}_courseDetails`, child.courseDetails);
+        formDataToSubmit.append(`child_${index + 1}_workDetails`, child.workDetails);
       });
 
       // Additional generation as individual fields
@@ -209,7 +298,13 @@ const MultiStepForm = () => {
           setFormData({
             name: '',
             age: '',
-            wifeName: '',
+            bloodGroup: '',
+            profession: '',
+            businessDescription: '',
+            businessAddress: '',
+            companyName: '',
+            designation: '',
+            wives: [{ name: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
             hasChildren: false,
             childrenCount: 0,
             children: [],
