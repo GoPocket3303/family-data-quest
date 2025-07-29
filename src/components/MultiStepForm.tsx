@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ export interface FormData {
   // Wife Info
   wives: Array<{
     name: string;
+    bloodGroup: string;
     occupation: string;
     businessDescription: string;
     businessAddress: string;
@@ -100,7 +102,7 @@ const MultiStepForm = () => {
     businessAddress: '',
     companyName: '',
     designation: '',
-    wives: [{ name: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
+    wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
     hasChildren: false,
     childrenCount: 0,
     children: [],
@@ -239,12 +241,34 @@ const MultiStepForm = () => {
       formDataToSubmit.append('age', formData.age);
       formDataToSubmit.append('bloodGroup', formData.bloodGroup);
       formDataToSubmit.append('profession', formData.profession);
-      formDataToSubmit.append('businessDescription', formData.businessDescription);
-      formDataToSubmit.append('businessAddress', formData.businessAddress);
-      formDataToSubmit.append('companyName', formData.companyName);
-      formDataToSubmit.append('designation', formData.designation);
+      
+      if (formData.profession === 'business') {
+        formDataToSubmit.append('businessDescription', formData.businessDescription);
+        formDataToSubmit.append('businessAddress', formData.businessAddress);
+      } else if (formData.profession === 'salaried') {
+        formDataToSubmit.append('companyName', formData.companyName);
+        formDataToSubmit.append('designation', formData.designation);
+      }
+      
       formDataToSubmit.append('hasChildren', formData.hasChildren.toString());
       formDataToSubmit.append('childrenCount', formData.childrenCount.toString());
+      
+      // Add wife count
+      const wifeCount = formData.wives.filter(wife => wife.name.trim() !== '').length;
+      formDataToSubmit.append('wifeCount', wifeCount.toString());
+      
+      // Add mother count
+      const motherCount = 1 + formData.mothers.length; // Base mother + additional mothers
+      formDataToSubmit.append('motherCount', motherCount.toString());
+      
+      // Add grandmother count
+      const grandMotherCount = (formData.grandMotherName ? 1 : 0) + formData.grandMothers.length;
+      formDataToSubmit.append('grandMotherCount', grandMotherCount.toString());
+      
+      // Add generation count
+      const generationCount = formData.hasAdditionalGeneration ? formData.additionalGeneration.length : 0;
+      formDataToSubmit.append('generationCount', generationCount.toString());
+      
       formDataToSubmit.append('fatherName', formData.fatherName);
       formDataToSubmit.append('fatherWhatsapp', formData.fatherWhatsapp);
       formDataToSubmit.append('motherName', formData.motherName);
@@ -263,13 +287,18 @@ const MultiStepForm = () => {
       formDataToSubmit.append('mailId', formData.mailId);
 
       formData.wives.forEach((wife, index) => {
-        if (wife.name) {
+        if (wife.name.trim() !== '') {
           formDataToSubmit.append(`wife_${index + 1}_name`, wife.name);
+          formDataToSubmit.append(`wife_${index + 1}_bloodGroup`, wife.bloodGroup);
           formDataToSubmit.append(`wife_${index + 1}_occupation`, wife.occupation);
-          formDataToSubmit.append(`wife_${index + 1}_businessDescription`, wife.businessDescription);
-          formDataToSubmit.append(`wife_${index + 1}_businessAddress`, wife.businessAddress);
-          formDataToSubmit.append(`wife_${index + 1}_companyName`, wife.companyName);
-          formDataToSubmit.append(`wife_${index + 1}_designation`, wife.designation);
+          
+          if (wife.occupation === 'business') {
+            formDataToSubmit.append(`wife_${index + 1}_businessDescription`, wife.businessDescription);
+            formDataToSubmit.append(`wife_${index + 1}_businessAddress`, wife.businessAddress);
+          } else if (wife.occupation === 'salaried') {
+            formDataToSubmit.append(`wife_${index + 1}_companyName`, wife.companyName);
+            formDataToSubmit.append(`wife_${index + 1}_designation`, wife.designation);
+          }
         }
       });
 
@@ -332,7 +361,7 @@ const MultiStepForm = () => {
             businessAddress: '',
             companyName: '',
             designation: '',
-            wives: [{ name: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
+            wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
             hasChildren: false,
             childrenCount: 0,
             children: [],

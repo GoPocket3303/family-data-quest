@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -45,7 +46,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
 
   const addWife = () => {
     updateData({
-      wives: [...data.wives, { name: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }]
+      wives: [...data.wives, { name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }]
     });
   };
 
@@ -270,6 +271,23 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                     placeholder="Enter wife's name"
                     className="h-12"
                   />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor={`wife-bloodGroup-${index}`}>Blood Group / இரத்த வகை</Label>
+                  <Select
+                    value={wife.bloodGroup}
+                    onValueChange={(value) => updateWifeData(index, 'bloodGroup', value)}
+                  >
+                    <SelectTrigger className="h-12">
+                      <SelectValue placeholder="Select blood group" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {bloodGroups.map((group) => (
+                        <SelectItem key={group} value={group}>{group}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div className="space-y-2">
