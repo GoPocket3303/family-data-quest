@@ -80,10 +80,10 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
 
       <div className="space-y-4">
         <div className="p-4 border rounded-lg bg-gray-50">
-          <h4 className="font-medium mb-4">Generation 1</h4>
+          <h4 className="font-medium mb-4">Generation 1 / தலைமுறை 1</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="greatGrandFatherName">Great Grandfather's Name</Label>
+              <Label htmlFor="greatGrandFatherName">Great Grandfather's Name / மூத்த தாத்தாவின் பெயர்</Label>
               <Input
                 id="greatGrandFatherName"
                 value={data.greatGrandFatherName}
@@ -93,7 +93,7 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="greatGrandMotherName">Great Grandmother's Name</Label>
+              <Label htmlFor="greatGrandMotherName">Great Grandmother's Name / மூத்த பாட்டியின் பெயர்</Label>
               <Input
                 id="greatGrandMotherName"
                 value={data.greatGrandMotherName}
@@ -111,14 +111,14 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
             onCheckedChange={(checked) => updateData({ hasAdditionalGeneration: checked as boolean })}
           />
           <Label htmlFor="hasAdditionalGeneration">
-            I know about additional generations
+            I know about additional generations / கூடுதல் தலைமுறை விவரங்கள் தெரியும்
           </Label>
         </div>
 
         {data.hasAdditionalGeneration && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label className="text-lg font-semibold">Additional Generation Details</Label>
+              <Label className="text-lg font-semibold">Additional Generation Details / கூடுதல் தலைமுறை விவரங்கள்</Label>
               <Button
                 type="button"
                 variant="outline"
@@ -127,14 +127,14 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                 className="flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                Add Generation
+                Add Generation / தலைமுறை சேர்க்கவும்
               </Button>
             </div>
 
             {data.additionalGeneration.map((generation, index) => (
               <div key={index} className="p-4 border rounded-lg bg-gray-50">
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-medium">Generation {index + 2}</h4>
+                  <h4 className="font-medium">Generation {index + 2} / தலைமுறை {index + 2}</h4>
                   <Button
                     type="button"
                     variant="ghost"
@@ -149,7 +149,7 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor={`additional-great-grandfather-${index}`}>
-                      {getGenerationOrdinal(index)} Great Grandfather's Name
+                      {getGenerationOrdinal(index)} Great Grandfather's Name / {getGenerationOrdinal(index)} மூத்த தாத்தாவின் பெயர்
                     </Label>
                     <Input
                       id={`additional-great-grandfather-${index}`}
@@ -161,7 +161,7 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                   
                   <div className="space-y-2">
                     <Label htmlFor={`additional-great-grandmother-${index}`}>
-                      {getGenerationOrdinal(index)} Great Grandmother's Name
+                      {getGenerationOrdinal(index)} Great Grandmother's Name / {getGenerationOrdinal(index)} மூத்த பாட்டியின் பெயர்
                     </Label>
                     <Input
                       id={`additional-great-grandmother-${index}`}
