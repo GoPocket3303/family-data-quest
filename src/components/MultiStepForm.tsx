@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,6 +7,7 @@ import { toast } from 'sonner';
 import PersonalFamilyStep from './form-steps/PersonalFamilyStep';
 import ContactDocumentsStep from './form-steps/ContactDocumentsStep';
 import ReviewStep from './form-steps/ReviewStep';
+import { LoadingOverlay } from '@/components/ui/loading';
 
 export interface FormData {
   // Personal Info
@@ -449,79 +449,82 @@ const MultiStepForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
-      <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-            User Registration Form
-          </h1>
-          <p className="text-gray-600 text-lg">Complete your registration in just 3 simple steps</p>
-        </div>
+    <>
+      <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              User Registration Form
+            </h1>
+            <p className="text-gray-600 text-lg">Complete your registration in just 3 simple steps</p>
+          </div>
 
-        <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
-            <CardTitle className="text-center text-3xl font-light">
-              {stepTitles[currentStep - 1]}
-            </CardTitle>
-            <div className="flex justify-center items-center gap-4 mt-6">
-              <span className="text-sm opacity-90">Progress</span>
-              <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-3" />
-              <span className="text-sm opacity-90">{Math.round(progress)}% Complete</span>
-            </div>
-            <div className="flex justify-center items-center gap-4 mt-2">
-              <span className="text-xs opacity-75">Step {currentStep} of {totalSteps}</span>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="p-8 lg:p-12">
-            {renderStep()}
+          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
+              <CardTitle className="text-center text-3xl font-light">
+                {stepTitles[currentStep - 1]}
+              </CardTitle>
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <span className="text-sm opacity-90">Progress</span>
+                <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-3" />
+                <span className="text-sm opacity-90">{Math.round(progress)}% Complete</span>
+              </div>
+              <div className="flex justify-center items-center gap-4 mt-2">
+                <span className="text-xs opacity-75">Step {currentStep} of {totalSteps}</span>
+              </div>
+            </CardHeader>
             
-            <div className="flex justify-between items-center mt-12 pt-8 border-t">
-              <Button
-                onClick={prevStep}
-                disabled={currentStep === 1}
-                variant="outline"
-                size="lg"
-                className="flex items-center gap-2 px-8"
-              >
-                <ChevronLeft className="w-5 h-5" />
-                Previous
-              </Button>
+            <CardContent className="p-8 lg:p-12">
+              {renderStep()}
               
-              {currentStep < totalSteps ? (
+              <div className="flex justify-between items-center mt-12 pt-8 border-t">
                 <Button
-                  onClick={nextStep}
+                  onClick={prevStep}
+                  disabled={currentStep === 1}
+                  variant="outline"
                   size="lg"
-                  className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8"
+                  className="flex items-center gap-2 px-8"
                 >
-                  Next Step
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronLeft className="w-5 h-5" />
+                  Previous
                 </Button>
-              ) : (
-                <Button
-                  onClick={handleSubmit}
-                  disabled={isSubmitting}
-                  size="lg"
-                  className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 min-w-[150px]"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      Submit Form
-                      <Send className="w-5 h-5" />
-                    </>
-                  )}
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                
+                {currentStep < totalSteps ? (
+                  <Button
+                    onClick={nextStep}
+                    size="lg"
+                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8"
+                  >
+                    Next Step
+                    <ChevronRight className="w-5 h-5" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    size="lg"
+                    className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 min-w-[150px]"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        Submit Form
+                        <Send className="w-5 h-5" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

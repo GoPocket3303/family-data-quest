@@ -29,6 +29,11 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
     updateData({ additionalGeneration: newGeneration });
   };
 
+  const getGenerationOrdinal = (index: number) => {
+    const ordinals = ['Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth'];
+    return ordinals[index] || `${index + 2}th`;
+  };
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -71,29 +76,34 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
             placeholder="Enter grandmother's name"
           />
         </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="greatGrandFatherName">Great Grandfather's Name</Label>
-          <Input
-            id="greatGrandFatherName"
-            value={data.greatGrandFatherName}
-            onChange={(e) => updateData({ greatGrandFatherName: e.target.value })}
-            placeholder="Enter great grandfather's name"
-          />
-        </div>
-        
-        <div className="space-y-2">
-          <Label htmlFor="greatGrandMotherName">Great Grandmother's Name</Label>
-          <Input
-            id="greatGrandMotherName"
-            value={data.greatGrandMotherName}
-            onChange={(e) => updateData({ greatGrandMotherName: e.target.value })}
-            placeholder="Enter great grandmother's name"
-          />
-        </div>
       </div>
 
       <div className="space-y-4">
+        <div className="p-4 border rounded-lg bg-gray-50">
+          <h4 className="font-medium mb-4">Generation 1</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="greatGrandFatherName">Great Grandfather's Name</Label>
+              <Input
+                id="greatGrandFatherName"
+                value={data.greatGrandFatherName}
+                onChange={(e) => updateData({ greatGrandFatherName: e.target.value })}
+                placeholder="Enter great grandfather's name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="greatGrandMotherName">Great Grandmother's Name</Label>
+              <Input
+                id="greatGrandMotherName"
+                value={data.greatGrandMotherName}
+                onChange={(e) => updateData({ greatGrandMotherName: e.target.value })}
+                placeholder="Enter great grandmother's name"
+              />
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center space-x-2">
           <Checkbox
             id="hasAdditionalGeneration"
@@ -138,22 +148,26 @@ const GenerationInfoStep: React.FC<GenerationInfoStepProps> = ({ data, updateDat
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor={`additional-great-grandfather-${index}`}>Great Grandfather's Name</Label>
+                    <Label htmlFor={`additional-great-grandfather-${index}`}>
+                      {getGenerationOrdinal(index)} Great Grandfather's Name
+                    </Label>
                     <Input
                       id={`additional-great-grandfather-${index}`}
                       value={generation.name}
                       onChange={(e) => updateGenerationData(index, 'name', e.target.value)}
-                      placeholder="Enter great grandfather's name"
+                      placeholder={`Enter ${getGenerationOrdinal(index).toLowerCase()} great grandfather's name`}
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor={`additional-great-grandmother-${index}`}>Great Grandmother's Name</Label>
+                    <Label htmlFor={`additional-great-grandmother-${index}`}>
+                      {getGenerationOrdinal(index)} Great Grandmother's Name
+                    </Label>
                     <Input
                       id={`additional-great-grandmother-${index}`}
                       value={generation.relation}
                       onChange={(e) => updateGenerationData(index, 'relation', e.target.value)}
-                      placeholder="Enter great grandmother's name"
+                      placeholder={`Enter ${getGenerationOrdinal(index).toLowerCase()} great grandmother's name`}
                     />
                   </div>
                 </div>
