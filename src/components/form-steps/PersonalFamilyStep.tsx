@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -108,6 +107,11 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
     updateData({ grandMothers: newGrandMothers });
   };
 
+  const getGenerationOrdinal = (index: number) => {
+    const ordinals = ['Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth', 'Ninth', 'Tenth'];
+    return ordinals[index] || `${index + 2}th`;
+  };
+
   return (
     <div className="space-y-8">
       {/* Personal Information */}
@@ -119,6 +123,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-sm font-medium">Full Name / பெயர் *</Label>
@@ -245,6 +250,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          
           {data.wives.map((wife, index) => (
             <div key={index} className="p-6 border rounded-lg bg-gray-50">
               <div className="flex justify-between items-center mb-4">
@@ -380,6 +386,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          
           <div className="space-y-4">
             <Label className="text-lg font-semibold">Do you have children? / உங்களுக்கு குழந்தைகள் உள்ளதா?</Label>
             <RadioGroup
@@ -427,6 +434,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
+            
             {data.children.map((child, index) => (
               <div key={index} className="p-6 border rounded-lg bg-gray-50">
                 <h4 className="font-semibold mb-4 text-lg">Child {index + 1} / குழந்தை {index + 1}</h4>
@@ -547,6 +555,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
               <Label htmlFor="fatherName">Father's Name / தந்தையின் பெயர் *</Label>
@@ -746,22 +755,26 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor={`gen-name-${index}`}>Name / பெயர்</Label>
+                        <Label htmlFor={`additional-great-grandfather-${index}`}>
+                          {getGenerationOrdinal(index)} Great Grandfather's Name / {getGenerationOrdinal(index)} மூத்த தாத்தாவின் பெயர்
+                        </Label>
                         <Input
-                          id={`gen-name-${index}`}
+                          id={`additional-great-grandfather-${index}`}
                           value={gen.name}
                           onChange={(e) => updateAdditionalGeneration(index, 'name', e.target.value)}
-                          placeholder="Enter name"
+                          placeholder={`Enter ${getGenerationOrdinal(index).toLowerCase()} great grandfather's name`}
                           className="h-12"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor={`gen-relation-${index}`}>Relation / உறவு</Label>
+                        <Label htmlFor={`additional-great-grandmother-${index}`}>
+                          {getGenerationOrdinal(index)} Great Grandmother's Name / {getGenerationOrdinal(index)} மூத்த பாட்டியின் பெயர்
+                        </Label>
                         <Input
-                          id={`gen-relation-${index}`}
+                          id={`additional-great-grandmother-${index}`}
                           value={gen.relation}
                           onChange={(e) => updateAdditionalGeneration(index, 'relation', e.target.value)}
-                          placeholder="e.g., Great Grandfather"
+                          placeholder={`Enter ${getGenerationOrdinal(index).toLowerCase()} great grandmother's name`}
                           className="h-12"
                         />
                       </div>
