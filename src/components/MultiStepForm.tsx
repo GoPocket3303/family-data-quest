@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
@@ -7,7 +8,7 @@ import { toast } from 'sonner';
 import PersonalFamilyStep from './form-steps/PersonalFamilyStep';
 import ContactDocumentsStep from './form-steps/ContactDocumentsStep';
 import ReviewStep from './form-steps/ReviewStep';
-import { Loading } from '@/components/ui/loading';
+import { LoadingOverlay } from '@/components/ui/loading';
 
 export interface FormData {
   name: string;
@@ -28,14 +29,21 @@ export interface FormData {
   motherWhatsapp: string;
   grandFatherName: string;
   grandMotherName: string;
+  greatGrandFatherName: string;
+  greatGrandMotherName: string;
   hasAdditionalGeneration: boolean;
   additionalGeneration: { name: string; relation: string; }[];
   wives: { name: string; bloodGroup: string; occupation: string; businessDescription: string; businessAddress: string; companyName: string; designation: string; }[];
   mothers: { name: string; whatsapp: string; }[];
   grandMothers: { name: string; }[];
   address: string;
+  mobileNo: string;
+  additionalMobileNo: string;
+  sameAsWhatsapp: boolean;
   whatsapp: string;
+  whatsappNo: string;
   email: string;
+  mailId: string;
   aadharNumber: string;
   panNumber: string;
   rationCardNumber: string;
@@ -43,6 +51,9 @@ export interface FormData {
   drivingLicenseNumber: string;
   passportNumber: string;
   photo: string;
+  profilePhoto: File | null;
+  familyPhoto: File | null;
+  documents: File[];
   aadharCard: string;
   panCard: string;
   rationCard: string;
@@ -71,14 +82,21 @@ const defaultFormData: FormData = {
   motherWhatsapp: '',
   grandFatherName: '',
   grandMotherName: '',
+  greatGrandFatherName: '',
+  greatGrandMotherName: '',
   hasAdditionalGeneration: false,
   additionalGeneration: [],
   wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
   mothers: [{ name: '', whatsapp: '' }],
   grandMothers: [{ name: '' }],
   address: '',
+  mobileNo: '',
+  additionalMobileNo: '',
+  sameAsWhatsapp: false,
   whatsapp: '',
+  whatsappNo: '',
   email: '',
+  mailId: '',
   aadharNumber: '',
   panNumber: '',
   rationCardNumber: '',
@@ -86,6 +104,9 @@ const defaultFormData: FormData = {
   drivingLicenseNumber: '',
   passportNumber: '',
   photo: '',
+  profilePhoto: null,
+  familyPhoto: null,
+  documents: [],
   aadharCard: '',
   panCard: '',
   rationCard: '',
@@ -129,7 +150,7 @@ const MultiStepForm = () => {
       case 1:
         return <ContactDocumentsStep data={formData} updateData={updateFormData} />;
       case 2:
-        return <ReviewStep data={formData} />;
+        return <ReviewStep data={formData} updateData={updateFormData} />;
       default:
         return <div>Not found</div>;
     }
@@ -160,99 +181,98 @@ const MultiStepForm = () => {
     }
   };
 
-  if (isSubmitting) {
-    return <Loading message="Submitting your registration..." />;
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
-        {/* Banner Image */}
-        <div className="mb-8 text-center">
-          <img 
-            src="/lovable-uploads/dc2f88e9-f341-4045-9583-27d7a9ebc0e4.png" 
-            alt="அருளமிகு இருளாம்சாமி துணை"
-            className="w-full max-w-4xl mx-auto rounded-lg shadow-lg"
-          />
-        </div>
-
-        {/* Progress Section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-gray-800">
-              Step {currentStep + 1} of {steps.length}
-            </h2>
-            <span className="text-sm text-gray-600">
-              {Math.round(((currentStep + 1) / steps.length) * 100)}% Complete
-            </span>
+    <>
+      <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
+          {/* Banner Image */}
+          <div className="mb-8 text-center">
+            <img 
+              src="/lovable-uploads/dc2f88e9-f341-4045-9583-27d7a9ebc0e4.png" 
+              alt="அருளமிகு இருளாம்சாமி துணை"
+              className="w-full max-w-4xl mx-auto rounded-lg shadow-lg"
+            />
           </div>
-          <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
-          
-          <div className="flex justify-between mt-4">
-            {steps.map((step, index) => (
-              <div key={step.id} className="flex items-center">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                  index <= currentStep 
-                    ? 'bg-blue-600 text-white' 
-                    : 'bg-gray-200 text-gray-600'
-                }`}>
-                  {index < currentStep ? <CheckCircle className="w-5 h-5" /> : index + 1}
+
+          {/* Progress Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-gray-800">
+                Step {currentStep + 1} of {steps.length}
+              </h2>
+              <span className="text-sm text-gray-600">
+                {Math.round(((currentStep + 1) / steps.length) * 100)}% Complete
+              </span>
+            </div>
+            <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
+            
+            <div className="flex justify-between mt-4">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    index <= currentStep 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-200 text-gray-600'
+                  }`}>
+                    {index < currentStep ? <CheckCircle className="w-5 h-5" /> : index + 1}
+                  </div>
+                  <span className={`ml-2 text-sm ${
+                    index <= currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'
+                  }`}>
+                    {step.title}
+                  </span>
+                  {index < steps.length - 1 && <ChevronRight className="w-4 h-4 ml-2 text-gray-400" />}
                 </div>
-                <span className={`ml-2 text-sm ${
-                  index <= currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'
-                }`}>
-                  {step.title}
-                </span>
-                {index < steps.length - 1 && <ChevronRight className="w-4 h-4 ml-2 text-gray-400" />}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Form Content */}
-        <Card className="shadow-xl border-0">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
-            <CardTitle className="text-xl text-center">
-              {steps[currentStep].title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-8">
-            {renderStep()}
-          </CardContent>
-        </Card>
+          {/* Form Content */}
+          <Card className="shadow-xl border-0">
+            <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
+              <CardTitle className="text-xl text-center">
+                {steps[currentStep].title}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-8">
+              {renderStep()}
+            </CardContent>
+          </Card>
 
-        {/* Navigation */}
-        <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={handlePrev}
-            disabled={currentStep === 0}
-            className="flex items-center gap-2"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Previous
-          </Button>
-          
-          {currentStep === steps.length - 1 ? (
+          {/* Navigation */}
+          <div className="flex justify-between mt-8">
             <Button
-              onClick={submitForm}
-              disabled={isSubmitting}
-              className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit Registration'}
-            </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
+              variant="outline"
+              onClick={handlePrev}
+              disabled={currentStep === 0}
               className="flex items-center gap-2"
             >
-              Next
-              <ChevronRight className="w-4 h-4" />
+              <ChevronLeft className="w-4 h-4" />
+              Previous
             </Button>
-          )}
+            
+            {currentStep === steps.length - 1 ? (
+              <Button
+                onClick={submitForm}
+                disabled={isSubmitting}
+                className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Registration'}
+              </Button>
+            ) : (
+              <Button
+                onClick={handleNext}
+                className="flex items-center gap-2"
+              >
+                Next
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
