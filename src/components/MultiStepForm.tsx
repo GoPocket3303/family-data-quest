@@ -453,6 +453,15 @@ const MultiStepForm = () => {
       <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
         <div className="max-w-5xl mx-auto">
+          {/* Banner Image */}
+          <div className="mb-8">
+            <img 
+              src="/lovable-uploads/fd6d0981-165c-4d68-9983-66ac2f2f8774.png" 
+              alt="Banner" 
+              className="w-full h-auto rounded-lg shadow-lg"
+            />
+          </div>
+
           <div className="text-center mb-8">
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
               User Registration Form
