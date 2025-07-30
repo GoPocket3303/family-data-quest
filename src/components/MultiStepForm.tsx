@@ -1,9 +1,8 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronRight, ChevronLeft, CheckCircle } from 'lucide-react';
+import { Progress } from '@/components/ui/progress';
+import { ChevronLeft, ChevronRight, Send, CheckCircle, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import PersonalFamilyStep from './form-steps/PersonalFamilyStep';
 import ContactDocumentsStep from './form-steps/ContactDocumentsStep';
@@ -11,6 +10,7 @@ import ReviewStep from './form-steps/ReviewStep';
 import { LoadingOverlay } from '@/components/ui/loading';
 
 export interface FormData {
+  // Personal Info
   name: string;
   age: string;
   bloodGroup: string;
@@ -19,257 +19,509 @@ export interface FormData {
   businessAddress: string;
   companyName: string;
   designation: string;
-  cast: string;
+  
+  // Wife Info
+  wives: Array<{
+    name: string;
+    bloodGroup: string;
+    occupation: string;
+    businessDescription: string;
+    businessAddress: string;
+    companyName: string;
+    designation: string;
+  }>;
+  
+  // Family Info
   hasChildren: boolean;
   childrenCount: number;
-  children: { name: string; age: string; gender: string; bloodGroup: string; status: string; courseDetails: string; workDetails: string; }[];
+  
+  // Children Details
+  children: Array<{
+    name: string;
+    age: string;
+    gender: string;
+    bloodGroup: string;
+    status: string;
+    courseDetails: string;
+    workDetails: string;
+  }>;
+  
+  // Generation Info
   fatherName: string;
   fatherWhatsapp: string;
   motherName: string;
   motherWhatsapp: string;
+  mothers: Array<{
+    name: string;
+    whatsapp: string;
+  }>;
   grandFatherName: string;
   grandMotherName: string;
+  grandMothers: Array<{
+    name: string;
+  }>;
   greatGrandFatherName: string;
   greatGrandMotherName: string;
+  greatGrandMothers: Array<{
+    name: string;
+  }>;
   hasAdditionalGeneration: boolean;
-  additionalGeneration: { name: string; relation: string; }[];
-  wives: { name: string; bloodGroup: string; occupation: string; businessDescription: string; businessAddress: string; companyName: string; designation: string; }[];
-  mothers: { name: string; whatsapp: string; }[];
-  grandMothers: { name: string; }[];
+  additionalGeneration: Array<{
+    name: string; // Great Grandfather's Name
+    relation: string; // Great Grandmother's Name
+  }>;
+  
+  // Contact Info
+  cast: string;
   address: string;
   mobileNo: string;
   additionalMobileNo: string;
-  sameAsWhatsapp: boolean;
-  whatsapp: string;
   whatsappNo: string;
-  email: string;
+  sameAsWhatsapp: boolean;
   mailId: string;
-  aadharNumber: string;
-  panNumber: string;
-  rationCardNumber: string;
-  voterIdNumber: string;
-  drivingLicenseNumber: string;
-  passportNumber: string;
-  photo: string;
+  
+  // Documents
+  documents: File[];
   profilePhoto: File | null;
   familyPhoto: File | null;
-  documents: File[];
-  aadharCard: string;
-  panCard: string;
-  rationCard: string;
-  voterId: string;
-  drivingLicense: string;
-  passport: string;
-  otherDocuments: string;
 }
 
-const defaultFormData: FormData = {
-  name: '',
-  age: '',
-  bloodGroup: '',
-  profession: '',
-  businessDescription: '',
-  businessAddress: '',
-  companyName: '',
-  designation: '',
-  cast: '',
-  hasChildren: false,
-  childrenCount: 0,
-  children: [],
-  fatherName: '',
-  fatherWhatsapp: '',
-  motherName: '',
-  motherWhatsapp: '',
-  grandFatherName: '',
-  grandMotherName: '',
-  greatGrandFatherName: '',
-  greatGrandMotherName: '',
-  hasAdditionalGeneration: false,
-  additionalGeneration: [],
-  wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
-  mothers: [{ name: '', whatsapp: '' }],
-  grandMothers: [{ name: '' }],
-  address: '',
-  mobileNo: '',
-  additionalMobileNo: '',
-  sameAsWhatsapp: false,
-  whatsapp: '',
-  whatsappNo: '',
-  email: '',
-  mailId: '',
-  aadharNumber: '',
-  panNumber: '',
-  rationCardNumber: '',
-  voterIdNumber: '',
-  drivingLicenseNumber: '',
-  passportNumber: '',
-  photo: '',
-  profilePhoto: null,
-  familyPhoto: null,
-  documents: [],
-  aadharCard: '',
-  panCard: '',
-  rationCard: '',
-  voterId: '',
-  drivingLicense: '',
-  passport: '',
-  otherDocuments: '',
-};
-
 const MultiStepForm = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<FormData>(defaultFormData);
+  const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const totalSteps = 3;
 
-  const steps = [
-    { id: 'personal', title: 'Personal & Family Info' },
-    { id: 'contact', title: 'Contact & Documents' },
-    { id: 'review', title: 'Review & Submit' },
-  ];
+  const [formData, setFormData] = useState<FormData>({
+    name: '',
+    age: '',
+    bloodGroup: '',
+    profession: '',
+    businessDescription: '',
+    businessAddress: '',
+    companyName: '',
+    designation: '',
+    wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
+    hasChildren: false,
+    childrenCount: 0,
+    children: [],
+    fatherName: '',
+    fatherWhatsapp: '',
+    motherName: '',
+    motherWhatsapp: '',
+    mothers: [],
+    grandFatherName: '',
+    grandMotherName: '',
+    grandMothers: [],
+    greatGrandFatherName: '',
+    greatGrandMotherName: '',
+    greatGrandMothers: [],
+    hasAdditionalGeneration: false,
+    additionalGeneration: [],
+    cast: '',
+    address: '',
+    mobileNo: '',
+    additionalMobileNo: '',
+    whatsappNo: '',
+    sameAsWhatsapp: false,
+    mailId: '',
+    documents: [],
+    profilePhoto: null,
+    familyPhoto: null,
+  });
 
   const updateFormData = (data: Partial<FormData>) => {
-    setFormData({ ...formData, ...data });
+    setFormData(prev => ({ ...prev, ...data }));
   };
 
-  const handleNext = () => {
-    if (currentStep < steps.length - 1) {
+  const calculateProgress = () => {
+    const requiredFields = [
+      'name', 'age', 'bloodGroup', 'profession', 'cast', 'fatherName', 'motherName', 'address', 'mobileNo', 'whatsappNo', 'mailId'
+    ];
+    
+    let completedFields = 0;
+    let totalFields = requiredFields.length;
+    
+    requiredFields.forEach(field => {
+      if (formData[field as keyof FormData] && formData[field as keyof FormData] !== '') {
+        completedFields++;
+      }
+    });
+    
+    if (formData.profession === 'business') {
+      totalFields += 2; // businessDescription, businessAddress
+      if (formData.businessDescription) completedFields++;
+      if (formData.businessAddress) completedFields++;
+    } else if (formData.profession === 'salaried') {
+      totalFields += 2; // companyName, designation
+      if (formData.companyName) completedFields++;
+      if (formData.designation) completedFields++;
+    }
+    
+    formData.wives.forEach((wife, index) => {
+      if (wife.name) {
+        totalFields += 2; // name, occupation
+        completedFields++;
+        if (wife.occupation) completedFields++;
+        
+        if (wife.occupation === 'business') {
+          totalFields += 2; // businessDescription, businessAddress
+          if (wife.businessDescription) completedFields++;
+          if (wife.businessAddress) completedFields++;
+        } else if (wife.occupation === 'salaried') {
+          totalFields += 2; // companyName, designation
+          if (wife.companyName) completedFields++;
+          if (wife.designation) completedFields++;
+        }
+      }
+    });
+    
+    if (formData.hasChildren) {
+      formData.children.forEach((child, index) => {
+        totalFields += 4; // name, age, gender, bloodGroup
+        if (child.name) completedFields++;
+        if (child.age) completedFields++;
+        if (child.gender) completedFields++;
+        if (child.bloodGroup) completedFields++;
+        
+        if (child.status) {
+          totalFields += 1;
+          completedFields++;
+          
+          if (child.status === 'studying' && child.courseDetails) {
+            totalFields += 1;
+            completedFields++;
+          } else if (child.status === 'working' && child.workDetails) {
+            totalFields += 1;
+            completedFields++;
+          }
+        }
+      });
+    }
+    
+    if (formData.hasAdditionalGeneration) {
+      formData.additionalGeneration.forEach((gen, index) => {
+        totalFields += 2; // name (great grandfather), relation (great grandmother)
+        if (gen.name) completedFields++;
+        if (gen.relation) completedFields++;
+      });
+    }
+    
+    totalFields += 1; // profile photo (required)
+    if (formData.profilePhoto) completedFields++;
+    
+    return (completedFields / totalFields) * 100;
+  };
+
+  useEffect(() => {
+    const newProgress = calculateProgress();
+    setProgress(newProgress);
+  }, [formData]);
+
+  const nextStep = () => {
+    if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
   };
 
-  const handlePrev = () => {
-    if (currentStep > 0) {
+  const prevStep = () => {
+    if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 0:
-        return <PersonalFamilyStep data={formData} updateData={updateFormData} />;
-      case 1:
-        return <ContactDocumentsStep data={formData} updateData={updateFormData} />;
-      case 2:
-        return <ReviewStep data={formData} updateData={updateFormData} />;
-      default:
-        return <div>Not found</div>;
-    }
-  };
-
-  const submitForm = async () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
+    
     try {
-      const response = await fetch('https://n8n.gopocket.in/webhook/yuvaraj', {
+      const formDataToSubmit = new FormData();
+      
+      formDataToSubmit.append('name', formData.name);
+      formDataToSubmit.append('age', formData.age);
+      formDataToSubmit.append('bloodGroup', formData.bloodGroup);
+      formDataToSubmit.append('profession', formData.profession);
+      
+      if (formData.profession === 'business') {
+        formDataToSubmit.append('businessDescription', formData.businessDescription);
+        formDataToSubmit.append('businessAddress', formData.businessAddress);
+      } else if (formData.profession === 'salaried') {
+        formDataToSubmit.append('companyName', formData.companyName);
+        formDataToSubmit.append('designation', formData.designation);
+      }
+      
+      formDataToSubmit.append('hasChildren', formData.hasChildren.toString());
+      formDataToSubmit.append('childrenCount', formData.childrenCount.toString());
+      
+      // Add wife count
+      const wifeCount = formData.wives.filter(wife => wife.name.trim() !== '').length;
+      formDataToSubmit.append('wifeCount', wifeCount.toString());
+      
+      // Add mother count
+      const motherCount = 1 + formData.mothers.length; // Base mother + additional mothers
+      formDataToSubmit.append('motherCount', motherCount.toString());
+      
+      // Add grandmother count
+      const grandMotherCount = (formData.grandMotherName ? 1 : 0) + formData.grandMothers.length;
+      formDataToSubmit.append('grandMotherCount', grandMotherCount.toString());
+      
+      // Add generation count
+      const generationCount = formData.hasAdditionalGeneration ? formData.additionalGeneration.length : 0;
+      formDataToSubmit.append('generationCount', generationCount.toString());
+      
+      formDataToSubmit.append('fatherName', formData.fatherName);
+      formDataToSubmit.append('fatherWhatsapp', formData.fatherWhatsapp);
+      formDataToSubmit.append('motherName', formData.motherName);
+      formDataToSubmit.append('motherWhatsapp', formData.motherWhatsapp);
+      formDataToSubmit.append('grandFatherName', formData.grandFatherName);
+      formDataToSubmit.append('grandMotherName', formData.grandMotherName);
+      formDataToSubmit.append('greatGrandFatherName', formData.greatGrandFatherName);
+      formDataToSubmit.append('greatGrandMotherName', formData.greatGrandMotherName);
+      formDataToSubmit.append('hasAdditionalGeneration', formData.hasAdditionalGeneration.toString());
+      formDataToSubmit.append('cast', formData.cast);
+      formDataToSubmit.append('address', formData.address);
+      formDataToSubmit.append('mobileNo', formData.mobileNo);
+      formDataToSubmit.append('additionalMobileNo', formData.additionalMobileNo);
+      formDataToSubmit.append('whatsappNo', formData.whatsappNo);
+      formDataToSubmit.append('sameAsWhatsapp', formData.sameAsWhatsapp.toString());
+      formDataToSubmit.append('mailId', formData.mailId);
+
+      formData.wives.forEach((wife, index) => {
+        if (wife.name.trim() !== '') {
+          formDataToSubmit.append(`wife_${index + 1}_name`, wife.name);
+          formDataToSubmit.append(`wife_${index + 1}_bloodGroup`, wife.bloodGroup);
+          formDataToSubmit.append(`wife_${index + 1}_occupation`, wife.occupation);
+          
+          if (wife.occupation === 'business') {
+            formDataToSubmit.append(`wife_${index + 1}_businessDescription`, wife.businessDescription);
+            formDataToSubmit.append(`wife_${index + 1}_businessAddress`, wife.businessAddress);
+          } else if (wife.occupation === 'salaried') {
+            formDataToSubmit.append(`wife_${index + 1}_companyName`, wife.companyName);
+            formDataToSubmit.append(`wife_${index + 1}_designation`, wife.designation);
+          }
+        }
+      });
+
+      formData.mothers.forEach((mother, index) => {
+        formDataToSubmit.append(`additional_mother_${index + 1}_name`, mother.name);
+        formDataToSubmit.append(`additional_mother_${index + 1}_whatsapp`, mother.whatsapp);
+      });
+
+      formData.grandMothers.forEach((grandmother, index) => {
+        formDataToSubmit.append(`additional_grandmother_${index + 1}_name`, grandmother.name);
+      });
+
+      formData.greatGrandMothers.forEach((greatGrandmother, index) => {
+        formDataToSubmit.append(`additional_great_grandmother_${index + 1}_name`, greatGrandmother.name);
+      });
+
+      formData.children.forEach((child, index) => {
+        formDataToSubmit.append(`child_${index + 1}_name`, child.name);
+        formDataToSubmit.append(`child_${index + 1}_age`, child.age);
+        formDataToSubmit.append(`child_${index + 1}_gender`, child.gender);
+        formDataToSubmit.append(`child_${index + 1}_bloodGroup`, child.bloodGroup);
+        formDataToSubmit.append(`child_${index + 1}_status`, child.status);
+        formDataToSubmit.append(`child_${index + 1}_courseDetails`, child.courseDetails);
+        formDataToSubmit.append(`child_${index + 1}_workDetails`, child.workDetails);
+      });
+
+      formData.additionalGeneration.forEach((gen, index) => {
+        formDataToSubmit.append(`additional_great_grandfather_${index + 2}_name`, gen.name);
+        formDataToSubmit.append(`additional_great_grandmother_${index + 2}_name`, gen.relation);
+      });
+
+      formData.documents.forEach((file, index) => {
+        formDataToSubmit.append(`document_${index + 1}`, file);
+      });
+
+      if (formData.profilePhoto) {
+        formDataToSubmit.append('profilePhoto', formData.profilePhoto);
+      }
+
+      if (formData.familyPhoto) {
+        formDataToSubmit.append('familyPhoto', formData.familyPhoto);
+      }
+
+      const response = await fetch('https://n8n.gopocket.in/webhook-test/yuvaraj', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSubmit,
       });
 
       if (response.ok) {
+        setIsSubmitted(true);
         toast.success('Form submitted successfully!');
-        setCurrentStep(steps.length - 1);
+        
+        setTimeout(() => {
+          setFormData({
+            name: '',
+            age: '',
+            bloodGroup: '',
+            profession: '',
+            businessDescription: '',
+            businessAddress: '',
+            companyName: '',
+            designation: '',
+            wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
+            hasChildren: false,
+            childrenCount: 0,
+            children: [],
+            fatherName: '',
+            fatherWhatsapp: '',
+            motherName: '',
+            motherWhatsapp: '',
+            mothers: [],
+            grandFatherName: '',
+            grandMotherName: '',
+            grandMothers: [],
+            greatGrandFatherName: '',
+            greatGrandMotherName: '',
+            greatGrandMothers: [],
+            hasAdditionalGeneration: false,
+            additionalGeneration: [],
+            cast: '',
+            address: '',
+            mobileNo: '',
+            additionalMobileNo: '',
+            whatsappNo: '',
+            sameAsWhatsapp: false,
+            mailId: '',
+            documents: [],
+            profilePhoto: null,
+            familyPhoto: null,
+          });
+          setCurrentStep(1);
+          setIsSubmitted(false);
+          setProgress(0);
+        }, 3000);
       } else {
-        throw new Error('Submission failed');
+        throw new Error('Failed to submit form');
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
       toast.error('Failed to submit form. Please try again.');
+      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }
   };
 
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return <PersonalFamilyStep data={formData} updateData={updateFormData} />;
+      case 2:
+        return <ContactDocumentsStep data={formData} updateData={updateFormData} />;
+      case 3:
+        return <ReviewStep data={formData} updateData={updateFormData} />;
+      default:
+        return null;
+    }
+  };
+
+  const stepTitles = [
+    'Personal & Family Details',
+    'Contact & Documents',
+    'Review & Submit'
+  ];
+
+  if (isSubmitted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 flex items-center justify-center">
+        <Card className="max-w-2xl w-full shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-12 text-center">
+            <div className="animate-scale-in">
+              <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 animate-pulse" />
+              <h2 className="text-4xl font-bold text-gray-800 mb-4">
+                Registration Successful!
+              </h2>
+              <p className="text-xl text-gray-600 mb-8">
+                Thank you for submitting your registration form. We have received your information successfully.
+              </p>
+              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+                <p className="text-green-800 font-medium">
+                  Your registration has been processed and you will be contacted shortly.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <>
       <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          {/* Banner Image */}
-          <div className="mb-8 text-center">
-            <img 
-              src="/lovable-uploads/dc2f88e9-f341-4045-9583-27d7a9ebc0e4.png" 
-              alt="அருளமிகு இருளாம்சாமி துணை"
-              className="w-full max-w-4xl mx-auto rounded-lg shadow-lg"
-            />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-8">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
+              User Registration Form
+            </h1>
+            <p className="text-gray-600 text-lg">Complete your registration in just 3 simple steps</p>
           </div>
 
-          {/* Progress Section */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">
-                Step {currentStep + 1} of {steps.length}
-              </h2>
-              <span className="text-sm text-gray-600">
-                {Math.round(((currentStep + 1) / steps.length) * 100)}% Complete
-              </span>
-            </div>
-            <Progress value={((currentStep + 1) / steps.length) * 100} className="h-2" />
-            
-            <div className="flex justify-between mt-4">
-              {steps.map((step, index) => (
-                <div key={step.id} className="flex items-center">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-                    index <= currentStep 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-200 text-gray-600'
-                  }`}>
-                    {index < currentStep ? <CheckCircle className="w-5 h-5" /> : index + 1}
-                  </div>
-                  <span className={`ml-2 text-sm ${
-                    index <= currentStep ? 'text-blue-600 font-medium' : 'text-gray-500'
-                  }`}>
-                    {step.title}
-                  </span>
-                  {index < steps.length - 1 && <ChevronRight className="w-4 h-4 ml-2 text-gray-400" />}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Form Content */}
-          <Card className="shadow-xl border-0">
-            <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
-              <CardTitle className="text-xl text-center">
-                {steps[currentStep].title}
+          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
+              <CardTitle className="text-center text-3xl font-light">
+                {stepTitles[currentStep - 1]}
               </CardTitle>
+              <div className="flex justify-center items-center gap-4 mt-6">
+                <span className="text-sm opacity-90">Progress</span>
+                <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-3" />
+                <span className="text-sm opacity-90">{Math.round(progress)}% Complete</span>
+              </div>
+              <div className="flex justify-center items-center gap-4 mt-2">
+                <span className="text-xs opacity-75">Step {currentStep} of {totalSteps}</span>
+              </div>
             </CardHeader>
-            <CardContent className="p-8">
+            
+            <CardContent className="p-8 lg:p-12">
               {renderStep()}
+              
+              <div className="flex justify-between items-center mt-12 pt-8 border-t">
+                <Button
+                  onClick={prevStep}
+                  disabled={currentStep === 1}
+                  variant="outline"
+                  size="lg"
+                  className="flex items-center gap-2 px-8"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                  Previous
+                </Button>
+                
+                {currentStep < totalSteps ? (
+                  <Button
+                    onClick={nextStep}
+                    size="lg"
+                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8"
+                  >
+                    Next Step
+                    <ChevronRight className="w-5 h-5" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                    size="lg"
+                    className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 min-w-[150px]"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Submitting...
+                      </>
+                    ) : (
+                      <>
+                        Submit Form
+                        <Send className="w-5 h-5" />
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
             </CardContent>
           </Card>
-
-          {/* Navigation */}
-          <div className="flex justify-between mt-8">
-            <Button
-              variant="outline"
-              onClick={handlePrev}
-              disabled={currentStep === 0}
-              className="flex items-center gap-2"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Previous
-            </Button>
-            
-            {currentStep === steps.length - 1 ? (
-              <Button
-                onClick={submitForm}
-                disabled={isSubmitting}
-                className="bg-green-600 hover:bg-green-700 flex items-center gap-2"
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit Registration'}
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                className="flex items-center gap-2"
-              >
-                Next
-                <ChevronRight className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     </>
