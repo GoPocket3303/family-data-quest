@@ -615,19 +615,19 @@ const MultiStepForm = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 flex items-center justify-center">
-        <Card className="max-w-2xl w-full shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-12 text-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-2 sm:p-4 flex items-center justify-center">
+        <Card className="max-w-2xl w-full shadow-2xl border-0 bg-white/80 backdrop-blur-sm mx-2">
+          <CardContent className="p-6 sm:p-12 text-center">
             <div className="animate-scale-in">
-              <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 animate-pulse" />
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">
+              <CheckCircle className="w-16 sm:w-20 h-16 sm:h-20 text-green-500 mx-auto mb-4 sm:mb-6 animate-pulse" />
+              <h2 className="text-2xl sm:text-4xl font-bold text-gray-800 mb-4">
                 Registration Successful!
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">
                 Thank you for submitting your registration form. We have received your information successfully.
               </p>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                <p className="text-green-800 font-medium">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4 sm:p-6">
+                <p className="text-green-800 font-medium text-sm sm:text-base">
                   Your registration has been processed and you will be contacted shortly.
                 </p>
               </div>
@@ -641,42 +641,48 @@ const MultiStepForm = () => {
   return (
     <>
       <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-2 sm:p-4">
         <div className="max-w-5xl mx-auto">
           {/* Banner Image */}
-          <div className="mb-8">
+          <div className="mb-4 sm:mb-8">
             <img 
               src="/lovable-uploads/Yuvaraj Sir-01.png"
               alt="Banner" 
               className="w-full h-auto rounded-lg shadow-lg"
+              style={{ 
+                maxHeight: '200px',
+                objectFit: 'contain'
+              }}
             />
           </div>
 
           <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
-              <CardTitle className="text-center text-3xl font-light">
+            <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-t-lg p-4 sm:p-6">
+              <CardTitle className="text-center text-xl sm:text-3xl font-light">
                 {stepTitles[currentStep - 1]}
               </CardTitle>
-              <div className="flex justify-center items-center gap-4 mt-6">
-                <span className="text-sm opacity-90">Progress</span>
-                <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-3" />
-                <span className="text-sm opacity-90">{Math.round(progress)}% Complete</span>
+              <div className="flex justify-center items-center gap-2 sm:gap-4 mt-4 sm:mt-6">
+                <span className="text-xs sm:text-sm opacity-90">Progress</span>
+                <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-2 sm:h-3" />
+                <span className="text-xs sm:text-sm opacity-90">{Math.round(progress)}% Complete</span>
               </div>
               <div className="flex justify-center items-center gap-4 mt-2">
                 <span className="text-xs opacity-75">Step {currentStep} of {totalSteps}</span>
               </div>
             </CardHeader>
             
-            <CardContent className="p-8 lg:p-12">
-              {renderStep()}
+            <CardContent className="p-4 sm:p-8 lg:p-12">
+              <div className="mobile-form-container">
+                {renderStep()}
+              </div>
               
-              <div className="flex justify-between items-center mt-12 pt-8 border-t">
+              <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8 sm:mt-12 pt-6 sm:pt-8 border-t">
                 <Button
                   onClick={prevStep}
                   disabled={currentStep === 1}
                   variant="outline"
                   size="lg"
-                  className="flex items-center gap-2 px-8"
+                  className="flex items-center gap-2 px-6 sm:px-8 w-full sm:w-auto order-2 sm:order-1"
                 >
                   <ChevronLeft className="w-5 h-5" />
                   Previous
@@ -686,7 +692,7 @@ const MultiStepForm = () => {
                   <Button
                     onClick={nextStep}
                     size="lg"
-                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8"
+                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-6 sm:px-8 w-full sm:w-auto order-1 sm:order-2"
                   >
                     Next Step
                     <ChevronRight className="w-5 h-5" />
@@ -696,7 +702,7 @@ const MultiStepForm = () => {
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                     size="lg"
-                    className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 min-w-[150px]"
+                    className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-6 sm:px-8 min-w-[150px] w-full sm:w-auto order-1 sm:order-2"
                   >
                     {isSubmitting ? (
                       <>
