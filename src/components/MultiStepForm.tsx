@@ -234,102 +234,180 @@ const MultiStepForm = () => {
   };
 
   const generatePDF = async (formData: FormData) => {
-    // Create a new jsPDF instance
     const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     
     let yPosition = 20;
-    const lineHeight = 8;
+    const pageWidth = doc.internal.pageSize.width;
     const pageHeight = doc.internal.pageSize.height;
+    const margin = 20;
+    const contentWidth = pageWidth - (margin * 2);
     
-    const addNewPageIfNeeded = () => {
-      if (yPosition > pageHeight - 30) {
+    const addNewPageIfNeeded = (requiredHeight = 20) => {
+      if (yPosition + requiredHeight > pageHeight - 30) {
         doc.addPage();
         yPosition = 20;
       }
     };
     
+    // Header with background color
+    doc.setFillColor(59, 130, 246); // Blue background
+    doc.rect(0, 0, pageWidth, 40, 'F');
+    
     // Title
-    doc.setFontSize(16);
-    doc.text('User Registration Form / பயனர் பதிவு படிவம்', 20, yPosition);
-    yPosition += lineHeight * 2;
+    doc.setTextColor(255, 255, 255); // White text
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    const title = 'User Registration Form / பயனர் பதிவு படிவம்';
+    const titleWidth = doc.getTextWidth(title);
+    doc.text(title, (pageWidth - titleWidth) / 2, 25);
     
-    // Personal Information
-    doc.setFontSize(14);
-    doc.text('Personal Information / தனிப்பட்ட தகவல்:', 20, yPosition);
-    yPosition += lineHeight;
+    yPosition = 50;
+    doc.setTextColor(0, 0, 0); // Reset to black text
     
-    doc.setFontSize(10);
-    doc.text(`Name / பெயர்: ${formData.name}`, 20, yPosition);
-    yPosition += lineHeight;
-    doc.text(`Age / வயது: ${formData.age}`, 20, yPosition);
-    yPosition += lineHeight;
-    doc.text(`Blood Group / இரத்த வகை: ${formData.bloodGroup}`, 20, yPosition);
-    yPosition += lineHeight;
-    doc.text(`Profession / தொழில்: ${formData.profession}`, 20, yPosition);
-    yPosition += lineHeight;
-    doc.text(`Community / சமூகம்: ${formData.cast}`, 20, yPosition);
-    yPosition += lineHeight * 2;
+    // Helper function to add section header
+    const addSectionHeader = (title: string, titleTamil: string) => {
+      addNewPageIfNeeded(30);
+      doc.setFillColor(248, 250, 252); // Light gray background
+      doc.rect(margin, yPosition - 5, contentWidth, 20, 'F');
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(30, 58, 138); // Dark blue text
+      doc.text(`${title} / ${titleTamil}`, margin + 5, yPosition + 8);
+      doc.setTextColor(0, 0, 0);
+      yPosition += 25;
+    };
     
-    addNewPageIfNeeded();
+    // Helper function to add field
+    const addField = (label: string, labelTamil: string, value: string) => {
+      addNewPageIfNeeded(15);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${label} / ${labelTamil}:`, margin, yPosition);
+      doc.setFont('helvetica', 'normal');
+      
+      // Handle long values
+      const maxWidth = contentWidth - 80;
+      const splitValue = doc.splitTextToSize(value || 'Not provided', maxWidth);
+      doc.text(splitValue, margin + 80, yPosition);
+      
+      yPosition += Math.max(10, splitValue.length * 5);
+    };
+    
+    // Personal Information Section
+    addSectionHeader('Personal Information', 'தனிப்பட்ட தகவல்');
+    addField('Name', 'பெயர்', formData.name);
+    addField('Age', 'வயது', formData.age);
+    addField('Blood Group', 'இரத்த வகை', formData.bloodGroup);
+    addField('Profession', 'தொழில்', formData.profession);
+    
+    if (formData.profession === 'business') {
+      addField('Business Description', 'வணிக விளக்கம்', formData.businessDescription);
+      addField('Business Address', 'வணிக முகவரி', formData.businessAddress);
+    } else if (formData.profession === 'salaried') {
+      addField('Company Name', 'நிறுவன பெயர்', formData.companyName);
+      addField('Designation', 'பதவி', formData.designation);
+    }
+    
+    addField('Community', 'பட்டப்பெயர் / கூட்டம்', formData.cast);
+    
+    // Family Information Section
+    addSectionHeader('Family Information', 'குடும்ப தகவல்');
+    addField('Father\'s Name', 'தந்தையின் பெயர்', formData.fatherName);
+    addField('Father\'s WhatsApp', 'தந்தையின் வாட்ஸ்அப்', formData.fatherWhatsapp);
+    addField('Mother\'s Name', 'தாயின் பெயர்', formData.motherName);
+    addField('Mother\'s WhatsApp', 'தாயின் வாட்ஸ்அப்', formData.motherWhatsapp);
+    
+    // Additional mothers
+    formData.mothers.forEach((mother, index) => {
+      if (mother.name) {
+        addField(`Additional Mother ${index + 1}`, `கூடுதல் தாய் ${index + 1}`, mother.name);
+        addField(`Additional Mother ${index + 1} WhatsApp`, `கூடுதல் தாய் ${index + 1} வாட்ஸ்அப்`, mother.whatsapp);
+      }
+    });
+    
+    addField('Grandfather\'s Name', 'தாத்தாவின் பெயர்', formData.grandFatherName);
+    addField('Grandmother\'s Name', 'பாட்டியின் பெயர்', formData.grandMotherName);
     
     // Wife Information
     if (formData.wives.some(wife => wife.name)) {
-      doc.setFontSize(14);
-      doc.text('Wife Information / மனைவி தகவல்:', 20, yPosition);
-      yPosition += lineHeight;
-      
-      doc.setFontSize(10);
+      addSectionHeader('Wife Information', 'மனைவி தகவல்');
       formData.wives.forEach((wife, index) => {
         if (wife.name) {
-          doc.text(`Wife ${index + 1} Name / மனைவி ${index + 1} பெயர்: ${wife.name}`, 20, yPosition);
-          yPosition += lineHeight;
-          if (wife.whatsappNo) {
-            doc.text(`Wife ${index + 1} WhatsApp / மனைவி ${index + 1} வாட்ஸ்அப்: ${wife.whatsappNo}`, 20, yPosition);
-            yPosition += lineHeight;
+          addField(`Wife ${index + 1} Name`, `மனைவி ${index + 1} பெயர்`, wife.name);
+          addField(`Wife ${index + 1} Blood Group`, `மனைவி ${index + 1} இரத்த வகை`, wife.bloodGroup);
+          addField(`Wife ${index + 1} Occupation`, `மனைவி ${index + 1} தொழில்`, wife.occupation);
+          addField(`Wife ${index + 1} WhatsApp`, `மனைவி ${index + 1} வாட்ஸ்அப்`, wife.whatsappNo);
+          
+          if (wife.occupation === 'business') {
+            addField(`Wife ${index + 1} Business Description`, `மனைவி ${index + 1} வணிக விளக்கம்`, wife.businessDescription);
+            addField(`Wife ${index + 1} Business Address`, `மனைவி ${index + 1} வணிக முகவரி`, wife.businessAddress);
+          } else if (wife.occupation === 'salaried') {
+            addField(`Wife ${index + 1} Company Name`, `மனைவி ${index + 1} நிறுவன பெயர்`, wife.companyName);
+            addField(`Wife ${index + 1} Designation`, `மனைவி ${index + 1} பதவி`, wife.designation);
           }
-          addNewPageIfNeeded();
+          yPosition += 10; // Extra space between wives
         }
       });
-      yPosition += lineHeight;
     }
     
     // Children Information
     if (formData.hasChildren && formData.children.length > 0) {
-      doc.setFontSize(14);
-      doc.text('Children Information / குழந்தைகளின் தகவல்:', 20, yPosition);
-      yPosition += lineHeight;
-      
-      doc.setFontSize(10);
+      addSectionHeader('Children Information', 'குழந்தைகளின் தகவல்');
       formData.children.forEach((child, index) => {
         if (child.name) {
-          doc.text(`Child ${index + 1} Name / குழந்தை ${index + 1} பெயர்: ${child.name}`, 20, yPosition);
-          yPosition += lineHeight;
-          doc.text(`Child ${index + 1} Age / குழந்தை ${index + 1} வயது: ${child.age}`, 20, yPosition);
-          yPosition += lineHeight;
-          if (child.whatsappNo) {
-            doc.text(`Child ${index + 1} WhatsApp / குழந்தை ${index + 1} வாட்ஸ்அப்: ${child.whatsappNo}`, 20, yPosition);
-            yPosition += lineHeight;
+          addField(`Child ${index + 1} Name`, `குழந்தை ${index + 1} பெயர்`, child.name);
+          addField(`Child ${index + 1} Age`, `குழந்தை ${index + 1} வயது`, child.age);
+          addField(`Child ${index + 1} Gender`, `குழந்தை ${index + 1} பாலினம்`, child.gender);
+          addField(`Child ${index + 1} Blood Group`, `குழந்தை ${index + 1} இரத்த வகை`, child.bloodGroup);
+          addField(`Child ${index + 1} Status`, `குழந்தை ${index + 1} நிலை`, child.status);
+          
+          if (child.status === 'studying') {
+            addField(`Child ${index + 1} Course Details`, `குழந்தை ${index + 1} படிப்பு விவரங்கள்`, child.courseDetails);
+          } else if (child.status === 'working') {
+            addField(`Child ${index + 1} Work Details`, `குழந்தை ${index + 1} வேலை விவரங்கள்`, child.workDetails);
           }
-          addNewPageIfNeeded();
+          
+          addField(`Child ${index + 1} WhatsApp`, `குழந்தை ${index + 1} வாட்ஸ்அப்`, child.whatsappNo);
+          yPosition += 10; // Extra space between children
         }
       });
-      yPosition += lineHeight;
     }
     
-    // Contact Information
-    doc.setFontSize(14);
-    doc.text('Contact Information / தொடர்பு தகவல்:', 20, yPosition);
-    yPosition += lineHeight;
+    // Generation Information
+    if (formData.greatGrandFatherName || formData.greatGrandMotherName || formData.hasAdditionalGeneration) {
+      addSectionHeader('Generation Information', 'தலைமுறை தகவல்');
+      addField('Great Grandfather\'s Name', 'மூத்த தாத்தாவின் பெயர்', formData.greatGrandFatherName);
+      addField('Great Grandmother\'s Name', 'மூத்த பாட்டியின் பெயர்', formData.greatGrandMotherName);
+      
+      if (formData.hasAdditionalGeneration) {
+        formData.additionalGeneration.forEach((gen, index) => {
+          addField(`Generation ${index + 2} Grandfather`, `தலைமுறை ${index + 2} தாத்தா`, gen.name);
+          addField(`Generation ${index + 2} Grandmother`, `தலைமுறை ${index + 2} பாட்டி`, gen.relation);
+        });
+      }
+    }
     
+    // Contact Information Section
+    addSectionHeader('Contact Information', 'தொடர்பு தகவல்');
+    addField('Address', 'முகவரி', formData.address);
+    addField('Mobile Number', 'மொபைல் எண்', formData.mobileNo);
+    if (formData.additionalMobileNo) {
+      addField('Additional Mobile', 'கூடுதல் மொபைல்', formData.additionalMobileNo);
+    }
+    addField('WhatsApp Number', 'வாட்ஸ்அப் எண்', formData.whatsappNo);
+    addField('Email ID', 'மின்னஞ்சல் முகவரி', formData.mailId);
+    
+    // Footer
+    addNewPageIfNeeded(40);
+    yPosition = pageHeight - 30;
+    doc.setFillColor(59, 130, 246);
+    doc.rect(0, yPosition - 10, pageWidth, 40, 'F');
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
-    doc.text(`Mobile / மொபைல்: ${formData.mobileNo}`, 20, yPosition);
-    yPosition += lineHeight;
-    doc.text(`WhatsApp / வாட்ஸ்அப்: ${formData.whatsappNo}`, 20, yPosition);
-    yPosition += lineHeight;
-    doc.text(`Email / மின்னஞ்சல்: ${formData.mailId}`, 20, yPosition);
-    yPosition += lineHeight;
-    doc.text(`Address / முகவரி: ${formData.address}`, 20, yPosition);
+    doc.setFont('helvetica', 'normal');
+    doc.text('Generated on: ' + new Date().toLocaleDateString(), margin, yPosition);
+    doc.text('Registration Form - Confidential', pageWidth - margin - 80, yPosition);
     
     return doc;
   };
@@ -572,13 +650,6 @@ const MultiStepForm = () => {
               alt="Banner" 
               className="w-full h-auto rounded-lg shadow-lg"
             />
-          </div>
-
-          <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-              User Registration Form
-            </h1>
-            <p className="text-gray-600 text-lg">Complete your registration in just 3 simple steps</p>
           </div>
 
           <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
