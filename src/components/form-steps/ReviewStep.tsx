@@ -96,10 +96,6 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data }) => {
                     <span className="font-medium">Occupation:</span>
                     <p className="text-gray-600">{wife.occupation || 'Not provided'}</p>
                   </div>
-                  <div>
-                    <span className="font-medium">WhatsApp Number:</span>
-                    <p className="text-gray-600">{wife.whatsappNo || 'Not provided'}</p>
-                  </div>
                   {wife.occupation === 'business' && (
                     <>
                       <div>
@@ -181,9 +177,6 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data }) => {
                       <p className="text-gray-600">
                         <span className="font-medium">Status:</span> {child.status || 'Not provided'}
                       </p>
-                      <p className="text-gray-600">
-                        <span className="font-medium">WhatsApp Number:</span> {child.whatsappNo || 'Not provided'}
-                      </p>
                       {child.status === 'studying' && child.courseDetails && (
                         <p className="text-gray-600">
                           <span className="font-medium">Course Details:</span> {child.courseDetails}
@@ -255,7 +248,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data }) => {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <span className="font-medium">பட்டப்பெயர் / கூட்டம்:</span>
+              <span className="font-medium">Cast/Community:</span>
               <p className="text-gray-600">{data.cast || 'Not provided'}</p>
             </div>
             <div>
@@ -282,7 +275,7 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data }) => {
         </CardContent>
       </Card>
 
-      {/* Documents & Photos */}
+      {/* Documents */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -290,56 +283,26 @@ const ReviewStep: React.FC<ReviewStepProps> = ({ data }) => {
             Documents & Photos
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Profile Photo */}
-          <div>
-            <span className="font-medium block mb-2">Profile Photo:</span>
-            {data.profilePhoto ? (
-              <div className="flex flex-col items-start gap-2">
-                <img 
-                  src={URL.createObjectURL(data.profilePhoto)} 
-                  alt="Profile Photo"
-                  className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200 shadow-md"
-                />
-                <p className="text-sm text-gray-600">{data.profilePhoto.name}</p>
-              </div>
-            ) : (
-              <p className="text-gray-500 italic">Not uploaded</p>
-            )}
-          </div>
-
-          {/* Family Photo */}
-          <div>
-            <span className="font-medium block mb-2">Family Photo:</span>
-            {data.familyPhoto ? (
-              <div className="flex flex-col items-start gap-2">
-                <img 
-                  src={URL.createObjectURL(data.familyPhoto)} 
-                  alt="Family Photo"
-                  className="w-48 h-32 object-cover rounded-lg border-2 border-gray-200 shadow-md"
-                />
-                <p className="text-sm text-gray-600">{data.familyPhoto.name}</p>
-              </div>
-            ) : (
-              <p className="text-gray-500 italic">Not uploaded</p>
-            )}
-          </div>
-
-          {/* Documents */}
-          <div>
-            <span className="font-medium block mb-2">Additional Documents:</span>
-            {data.documents.length > 0 ? (
-              <div className="space-y-2">
-                {data.documents.map((doc, index) => (
-                  <div key={index} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                    <Upload className="w-4 h-4 text-green-600" />
-                    <span className="text-sm text-gray-700">{doc.name}</span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 italic">No additional documents uploaded</p>
-            )}
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <span className="font-medium">Profile Photo:</span>
+              <p className="text-gray-600">
+                {data.profilePhoto ? data.profilePhoto.name : 'Not uploaded'}
+              </p>
+            </div>
+            <div>
+              <span className="font-medium">Family Photo:</span>
+              <p className="text-gray-600">
+                {data.familyPhoto ? data.familyPhoto.name : 'Not uploaded'}
+              </p>
+            </div>
+            <div>
+              <span className="font-medium">Documents:</span>
+              <p className="text-gray-600">
+                {data.documents.length > 0 ? `${data.documents.length} file(s)` : 'None uploaded'}
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>

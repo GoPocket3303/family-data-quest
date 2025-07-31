@@ -1,5 +1,5 @@
 
-import { MultiStepForm } from '@/components/MultiStepForm';
+import MultiStepForm from '@/components/MultiStepForm';
 
 const Index = () => {
   return <MultiStepForm />;
