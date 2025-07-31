@@ -78,6 +78,26 @@ interface GenerationInfo {
   details: string;
 }
 
+interface Wife {
+  name: string;
+  bloodGroup: string;
+  occupation: string;
+  businessDescription: string;
+  businessAddress: string;
+  companyName: string;
+  designation: string;
+  whatsappNo: string;
+}
+
+interface Mother {
+  name: string;
+  whatsapp: string;
+}
+
+interface GrandMother {
+  name: string;
+}
+
 export interface FormData {
   personalInfo: PersonalInfo;
   familyInfo: FamilyMember[];
@@ -105,6 +125,21 @@ export interface FormData {
   whatsappNo: string;
   mailId: string;
   address: string;
+  // New properties that were missing
+  name: string;
+  age: string;
+  bloodGroup: string;
+  profession: string;
+  businessDescription: string;
+  businessAddress: string;
+  companyName: string;
+  designation: string;
+  cast: string;
+  wives: Wife[];
+  mothers: Mother[];
+  grandMothers: GrandMother[];
+  fatherWhatsapp: string;
+  motherWhatsapp: string;
 }
 
 const initialFormData: FormData = {
@@ -163,6 +198,21 @@ const initialFormData: FormData = {
   whatsappNo: '',
   mailId: '',
   address: '',
+  // Initialize new properties with default values
+  name: '',
+  age: '',
+  bloodGroup: '',
+  profession: '',
+  businessDescription: '',
+  businessAddress: '',
+  companyName: '',
+  designation: '',
+  cast: '',
+  wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '', whatsappNo: '' }],
+  mothers: [],
+  grandMothers: [],
+  fatherWhatsapp: '',
+  motherWhatsapp: '',
 };
 
 export const MultiStepForm = () => {
@@ -179,6 +229,9 @@ export const MultiStepForm = () => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
+    
+    // Set font to support Tamil text
+    doc.setFont('helvetica');
     
     let yPosition = 20;
     const pageHeight = doc.internal.pageSize.height;
@@ -235,15 +288,15 @@ export const MultiStepForm = () => {
     
     // Personal Information
     addSection('Personal Information', 'தனிப்பட்ட தகவல்');
-    addField('Name / பெயர்', formData.personalInfo.name);
-    addField('Age / வயது', formData.personalInfo.age);
+    addField('Name / பெயர்', formData.name);
+    addField('Age / வயது', formData.age);
     addField('Gender / பாலினம்', formData.personalInfo.gender);
-    addField('Blood Group / இரத்த வகை', formData.personalInfo.bloodGroup);
-    addField('பட்டப்பெயர் / கூட்டம்', formData.personalInfo.community);
+    addField('Blood Group / இரத்த வகை', formData.bloodGroup);
+    addField('பட்டப்பெயர் / கூட்டம்', formData.cast);
     addField('Status / நிலை', formData.personalInfo.status);
     addField('Course Details / படிப்பு விவரங்கள்', formData.personalInfo.courseDetails);
     addField('Work Details / வேலை விவரங்கள்', formData.personalInfo.workDetails);
-    addField('WhatsApp Number / வாட்ஸ்அப் எண்', formData.personalInfo.whatsappNo);
+    addField('WhatsApp Number / வாட்ஸ்அப் எண்', formData.whatsappNo);
     yPosition += 10;
     
     // Contact Information
@@ -283,7 +336,7 @@ export const MultiStepForm = () => {
       doc.text('Generated on: ' + new Date().toLocaleDateString(), margin, doc.internal.pageSize.height - 10);
     }
     
-    doc.save(`registration-form-${formData.personalInfo.name || 'form'}.pdf`);
+    doc.save(`registration-form-${formData.name || 'form'}.pdf`);
   };
   
   const handleSubmit = () => {
