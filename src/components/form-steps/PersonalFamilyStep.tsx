@@ -172,7 +172,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="business">Business / வணிகம்</SelectItem>
-                  <SelectItem value="salaried">Salaried / சம்பளம்</SelectItem>
+                  <SelectItem value="salaried">Salaried / வேலை</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -229,7 +229,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="cast" className="text-sm font-medium">Community / சமூகம் *</Label>
+            <Label htmlFor="cast" className="text-sm font-medium">பட்டப்பெயர் / கூட்டம் *</Label>
             <Input
               id="cast"
               value={data.cast}
@@ -308,7 +308,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                     <SelectContent>
                       <SelectItem value="housewife">Housewife / இல்லத்தரசி</SelectItem>
                       <SelectItem value="business">Business / வணிகம்</SelectItem>
-                      <SelectItem value="salaried">Salaried / சம்பளம்</SelectItem>
+                      <SelectItem value="salaried">Salaried / வேலை</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
