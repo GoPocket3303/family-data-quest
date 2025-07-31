@@ -29,6 +29,7 @@ export interface FormData {
     businessAddress: string;
     companyName: string;
     designation: string;
+    whatsappNo: string;
   }>;
   
   // Family Info
@@ -44,6 +45,7 @@ export interface FormData {
     status: string;
     courseDetails: string;
     workDetails: string;
+    whatsappNo: string;
   }>;
   
   // Generation Info
@@ -102,7 +104,7 @@ const MultiStepForm = () => {
     businessAddress: '',
     companyName: '',
     designation: '',
-    wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
+    wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '', whatsappNo: '' }],
     hasChildren: false,
     childrenCount: 0,
     children: [],
@@ -231,11 +233,119 @@ const MultiStepForm = () => {
     }
   };
 
+  const generatePDF = async (formData: FormData) => {
+    // Create a new jsPDF instance
+    const { jsPDF } = await import('jspdf');
+    const doc = new jsPDF();
+    
+    let yPosition = 20;
+    const lineHeight = 8;
+    const pageHeight = doc.internal.pageSize.height;
+    
+    const addNewPageIfNeeded = () => {
+      if (yPosition > pageHeight - 30) {
+        doc.addPage();
+        yPosition = 20;
+      }
+    };
+    
+    // Title
+    doc.setFontSize(16);
+    doc.text('User Registration Form / பயனர் பதிவு படிவம்', 20, yPosition);
+    yPosition += lineHeight * 2;
+    
+    // Personal Information
+    doc.setFontSize(14);
+    doc.text('Personal Information / தனிப்பட்ட தகவல்:', 20, yPosition);
+    yPosition += lineHeight;
+    
+    doc.setFontSize(10);
+    doc.text(`Name / பெயர்: ${formData.name}`, 20, yPosition);
+    yPosition += lineHeight;
+    doc.text(`Age / வயது: ${formData.age}`, 20, yPosition);
+    yPosition += lineHeight;
+    doc.text(`Blood Group / இரத்த வகை: ${formData.bloodGroup}`, 20, yPosition);
+    yPosition += lineHeight;
+    doc.text(`Profession / தொழில்: ${formData.profession}`, 20, yPosition);
+    yPosition += lineHeight;
+    doc.text(`Community / சமூகம்: ${formData.cast}`, 20, yPosition);
+    yPosition += lineHeight * 2;
+    
+    addNewPageIfNeeded();
+    
+    // Wife Information
+    if (formData.wives.some(wife => wife.name)) {
+      doc.setFontSize(14);
+      doc.text('Wife Information / மனைவி தகவல்:', 20, yPosition);
+      yPosition += lineHeight;
+      
+      doc.setFontSize(10);
+      formData.wives.forEach((wife, index) => {
+        if (wife.name) {
+          doc.text(`Wife ${index + 1} Name / மனைவி ${index + 1} பெயர்: ${wife.name}`, 20, yPosition);
+          yPosition += lineHeight;
+          if (wife.whatsappNo) {
+            doc.text(`Wife ${index + 1} WhatsApp / மனைவி ${index + 1} வாட்ஸ்அப்: ${wife.whatsappNo}`, 20, yPosition);
+            yPosition += lineHeight;
+          }
+          addNewPageIfNeeded();
+        }
+      });
+      yPosition += lineHeight;
+    }
+    
+    // Children Information
+    if (formData.hasChildren && formData.children.length > 0) {
+      doc.setFontSize(14);
+      doc.text('Children Information / குழந்தைகளின் தகவல்:', 20, yPosition);
+      yPosition += lineHeight;
+      
+      doc.setFontSize(10);
+      formData.children.forEach((child, index) => {
+        if (child.name) {
+          doc.text(`Child ${index + 1} Name / குழந்தை ${index + 1} பெயர்: ${child.name}`, 20, yPosition);
+          yPosition += lineHeight;
+          doc.text(`Child ${index + 1} Age / குழந்தை ${index + 1} வயது: ${child.age}`, 20, yPosition);
+          yPosition += lineHeight;
+          if (child.whatsappNo) {
+            doc.text(`Child ${index + 1} WhatsApp / குழந்தை ${index + 1} வாட்ஸ்அப்: ${child.whatsappNo}`, 20, yPosition);
+            yPosition += lineHeight;
+          }
+          addNewPageIfNeeded();
+        }
+      });
+      yPosition += lineHeight;
+    }
+    
+    // Contact Information
+    doc.setFontSize(14);
+    doc.text('Contact Information / தொடர்பு தகவல்:', 20, yPosition);
+    yPosition += lineHeight;
+    
+    doc.setFontSize(10);
+    doc.text(`Mobile / மொபைல்: ${formData.mobileNo}`, 20, yPosition);
+    yPosition += lineHeight;
+    doc.text(`WhatsApp / வாட்ஸ்அப்: ${formData.whatsappNo}`, 20, yPosition);
+    yPosition += lineHeight;
+    doc.text(`Email / மின்னஞ்சல்: ${formData.mailId}`, 20, yPosition);
+    yPosition += lineHeight;
+    doc.text(`Address / முகவரி: ${formData.address}`, 20, yPosition);
+    
+    return doc;
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     
     try {
+      // Generate PDF
+      const pdfDoc = await generatePDF(formData);
+      const pdfBlob = pdfDoc.output('blob');
+      
       const formDataToSubmit = new FormData();
+      
+      // Add PDF to form data
+      formDataToSubmit.append('registrationPdf', pdfBlob, 'registration_form.pdf');
       
       formDataToSubmit.append('name', formData.name);
       formDataToSubmit.append('age', formData.age);
@@ -291,6 +401,7 @@ const MultiStepForm = () => {
           formDataToSubmit.append(`wife_${index + 1}_name`, wife.name);
           formDataToSubmit.append(`wife_${index + 1}_bloodGroup`, wife.bloodGroup);
           formDataToSubmit.append(`wife_${index + 1}_occupation`, wife.occupation);
+          formDataToSubmit.append(`wife_${index + 1}_whatsappNo`, wife.whatsappNo);
           
           if (wife.occupation === 'business') {
             formDataToSubmit.append(`wife_${index + 1}_businessDescription`, wife.businessDescription);
@@ -323,6 +434,7 @@ const MultiStepForm = () => {
         formDataToSubmit.append(`child_${index + 1}_status`, child.status);
         formDataToSubmit.append(`child_${index + 1}_courseDetails`, child.courseDetails);
         formDataToSubmit.append(`child_${index + 1}_workDetails`, child.workDetails);
+        formDataToSubmit.append(`child_${index + 1}_whatsappNo`, child.whatsappNo);
       });
 
       formData.additionalGeneration.forEach((gen, index) => {
@@ -342,7 +454,7 @@ const MultiStepForm = () => {
         formDataToSubmit.append('familyPhoto', formData.familyPhoto);
       }
 
-      const response = await fetch('https://n8n.gopocket.in/webhook-test/yuvaraj', {
+      const response = await fetch('https://n8n.gopocket.in/webhook/yuvaraj', {
         method: 'POST',
         body: formDataToSubmit,
       });
@@ -361,7 +473,7 @@ const MultiStepForm = () => {
             businessAddress: '',
             companyName: '',
             designation: '',
-            wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }],
+            wives: [{ name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '', whatsappNo: '' }],
             hasChildren: false,
             childrenCount: 0,
             children: [],

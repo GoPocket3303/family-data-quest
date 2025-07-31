@@ -20,13 +20,13 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
     updateData({ 
       hasChildren, 
       childrenCount: hasChildren ? 1 : 0,
-      children: hasChildren ? [{ name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '' }] : []
+      children: hasChildren ? [{ name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '', whatsappNo: '' }] : []
     });
   };
 
   const handleChildrenCountChange = (count: number) => {
     const newChildren = Array.from({ length: count }, (_, i) => 
-      data.children[i] || { name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '' }
+      data.children[i] || { name: '', age: '', gender: '', bloodGroup: '', status: '', courseDetails: '', workDetails: '', whatsappNo: '' }
     );
     updateData({ childrenCount: count, children: newChildren });
   };
@@ -45,7 +45,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
 
   const addWife = () => {
     updateData({
-      wives: [...data.wives, { name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '' }]
+      wives: [...data.wives, { name: '', bloodGroup: '', occupation: '', businessDescription: '', businessAddress: '', companyName: '', designation: '', whatsappNo: '' }]
     });
   };
 
@@ -312,6 +312,18 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                     </SelectContent>
                   </Select>
                 </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor={`wife-whatsapp-${index}`}>WhatsApp Number / வாட்ஸ்அப் எண்</Label>
+                  <Input
+                    id={`wife-whatsapp-${index}`}
+                    type="tel"
+                    value={wife.whatsappNo}
+                    onChange={(e) => updateWifeData(index, 'whatsappNo', e.target.value)}
+                    placeholder="Enter WhatsApp number"
+                    className="h-12"
+                  />
+                </div>
               </div>
 
               {wife.occupation === 'business' && (
@@ -499,20 +511,34 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor={`child-status-${index}`}>Status / நிலைமை</Label>
-                  <Select
-                    value={child.status}
-                    onValueChange={(value) => updateChildData(index, 'status', value)}
-                  >
-                    <SelectTrigger className="h-12">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="studying">Studying / படிக்கிறது</SelectItem>
-                      <SelectItem value="working">Working / வேலை செய்கிறது</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div className="space-y-2">
+                    <Label htmlFor={`child-status-${index}`}>Status / நிலைமை</Label>
+                    <Select
+                      value={child.status}
+                      onValueChange={(value) => updateChildData(index, 'status', value)}
+                    >
+                      <SelectTrigger className="h-12">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="studying">Studying / படிக்கிறது</SelectItem>
+                        <SelectItem value="working">Working / வேலை செய்கிறது</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor={`child-whatsapp-${index}`}>WhatsApp Number / வாட்ஸ்அப் எண்</Label>
+                    <Input
+                      id={`child-whatsapp-${index}`}
+                      type="tel"
+                      value={child.whatsappNo}
+                      onChange={(e) => updateChildData(index, 'whatsappNo', e.target.value)}
+                      placeholder="Enter WhatsApp number"
+                      className="h-12"
+                    />
+                  </div>
                 </div>
 
                 {child.status === 'studying' && (
