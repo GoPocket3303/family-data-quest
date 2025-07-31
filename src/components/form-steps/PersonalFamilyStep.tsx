@@ -595,7 +595,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="fatherWhatsapp">Father's WhatsApp / தந்தையின் வாட்ஸ்அப் *</Label>
+              <Label htmlFor="fatherWhatsapp">Father's mobile no / தந்தையின் மொபைல் எண் *</Label>
               <Input
                 id="fatherWhatsapp"
                 type="tel"
@@ -618,7 +618,7 @@ const PersonalFamilyStep: React.FC<PersonalFamilyStepProps> = ({ data, updateDat
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="motherWhatsapp">Mother's WhatsApp / தாயின் வாட்ஸ்அப் *</Label>
+              <Label htmlFor="motherWhatsapp">Mother's mobile no / தாயின் மொபைல் எண் *</Label>
               <Input
                 id="motherWhatsapp"
                 type="tel"
