@@ -646,7 +646,7 @@ const MultiStepForm = () => {
           {/* Banner Image */}
           <div className="mb-8">
             <img 
-              src="/lovable-uploads/fd6d0981-165c-4d68-9983-66ac2f2f8774.png" 
+              src="/lovable-uploads/Yuvaraj Sir-01.png"
               alt="Banner" 
               className="w-full h-auto rounded-lg shadow-lg"
             />
