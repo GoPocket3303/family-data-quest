@@ -152,27 +152,27 @@ const MultiStepForm = () => {
     });
     
     if (formData.profession === 'business') {
-      totalFields += 2; // businessDescription, businessAddress
+      totalFields += 2;
       if (formData.businessDescription) completedFields++;
       if (formData.businessAddress) completedFields++;
     } else if (formData.profession === 'salaried') {
-      totalFields += 2; // companyName, designation
+      totalFields += 2;
       if (formData.companyName) completedFields++;
       if (formData.designation) completedFields++;
     }
     
     formData.wives.forEach((wife, index) => {
       if (wife.name) {
-        totalFields += 2; // name, occupation
+        totalFields += 2;
         completedFields++;
         if (wife.occupation) completedFields++;
         
         if (wife.occupation === 'business') {
-          totalFields += 2; // businessDescription, businessAddress
+          totalFields += 2;
           if (wife.businessDescription) completedFields++;
           if (wife.businessAddress) completedFields++;
         } else if (wife.occupation === 'salaried') {
-          totalFields += 2; // companyName, designation
+          totalFields += 2;
           if (wife.companyName) completedFields++;
           if (wife.designation) completedFields++;
         }
@@ -181,7 +181,7 @@ const MultiStepForm = () => {
     
     if (formData.hasChildren) {
       formData.children.forEach((child, index) => {
-        totalFields += 4; // name, age, gender, bloodGroup
+        totalFields += 4;
         if (child.name) completedFields++;
         if (child.age) completedFields++;
         if (child.gender) completedFields++;
@@ -204,13 +204,13 @@ const MultiStepForm = () => {
     
     if (formData.hasAdditionalGeneration) {
       formData.additionalGeneration.forEach((gen, index) => {
-        totalFields += 2; // name (great grandfather), relation (great grandmother)
+        totalFields += 2;
         if (gen.name) completedFields++;
         if (gen.relation) completedFields++;
       });
     }
     
-    totalFields += 1; // profile photo (required)
+    totalFields += 1;
     if (formData.profilePhoto) completedFields++;
     
     return (completedFields / totalFields) * 100;
@@ -250,12 +250,10 @@ const MultiStepForm = () => {
       }
     };
     
-    // Header with background color
-    doc.setFillColor(59, 130, 246); // Blue background
+    doc.setFillColor(59, 130, 246);
     doc.rect(0, 0, pageWidth, 40, 'F');
     
-    // Title
-    doc.setTextColor(255, 255, 255); // White text
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
     const title = 'User Registration Form / பயனர் பதிவு படிவம்';
@@ -263,22 +261,20 @@ const MultiStepForm = () => {
     doc.text(title, (pageWidth - titleWidth) / 2, 25);
     
     yPosition = 50;
-    doc.setTextColor(0, 0, 0); // Reset to black text
+    doc.setTextColor(0, 0, 0);
     
-    // Helper function to add section header
     const addSectionHeader = (title: string, titleTamil: string) => {
       addNewPageIfNeeded(30);
-      doc.setFillColor(248, 250, 252); // Light gray background
+      doc.setFillColor(248, 250, 252);
       doc.rect(margin, yPosition - 5, contentWidth, 20, 'F');
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.setTextColor(30, 58, 138); // Dark blue text
+      doc.setTextColor(30, 58, 138);
       doc.text(`${title} / ${titleTamil}`, margin + 5, yPosition + 8);
       doc.setTextColor(0, 0, 0);
       yPosition += 25;
     };
     
-    // Helper function to add field
     const addField = (label: string, labelTamil: string, value: string) => {
       addNewPageIfNeeded(15);
       doc.setFontSize(10);
@@ -286,7 +282,6 @@ const MultiStepForm = () => {
       doc.text(`${label} / ${labelTamil}:`, margin, yPosition);
       doc.setFont('helvetica', 'normal');
       
-      // Handle long values
       const maxWidth = contentWidth - 80;
       const splitValue = doc.splitTextToSize(value || 'Not provided', maxWidth);
       doc.text(splitValue, margin + 80, yPosition);
@@ -294,7 +289,6 @@ const MultiStepForm = () => {
       yPosition += Math.max(10, splitValue.length * 5);
     };
     
-    // Personal Information Section
     addSectionHeader('Personal Information', 'தனிப்பட்ட தகவல்');
     addField('Name', 'பெயர்', formData.name);
     addField('Age', 'வயது', formData.age);
@@ -311,14 +305,12 @@ const MultiStepForm = () => {
     
     addField('Community', 'பட்டப்பெயர் / கூட்டம்', formData.cast);
     
-    // Family Information Section
     addSectionHeader('Family Information', 'குடும்ப தகவல்');
     addField('Father\'s Name', 'தந்தையின் பெயர்', formData.fatherName);
     addField('Father\'s WhatsApp', 'தந்தையின் வாட்ஸ்அப்', formData.fatherWhatsapp);
     addField('Mother\'s Name', 'தாயின் பெயர்', formData.motherName);
     addField('Mother\'s WhatsApp', 'தாயின் வாட்ஸ்அப்', formData.motherWhatsapp);
     
-    // Additional mothers
     formData.mothers.forEach((mother, index) => {
       if (mother.name) {
         addField(`Additional Mother ${index + 1}`, `கூடுதல் தாய் ${index + 1}`, mother.name);
@@ -329,7 +321,6 @@ const MultiStepForm = () => {
     addField('Grandfather\'s Name', 'தாத்தாவின் பெயர்', formData.grandFatherName);
     addField('Grandmother\'s Name', 'பாட்டியின் பெயர்', formData.grandMotherName);
     
-    // Wife Information
     if (formData.wives.some(wife => wife.name)) {
       addSectionHeader('Wife Information', 'மனைவி தகவல்');
       formData.wives.forEach((wife, index) => {
@@ -346,12 +337,11 @@ const MultiStepForm = () => {
             addField(`Wife ${index + 1} Company Name`, `மனைவி ${index + 1} நிறுவன பெயர்`, wife.companyName);
             addField(`Wife ${index + 1} Designation`, `மனைவி ${index + 1} பதவி`, wife.designation);
           }
-          yPosition += 10; // Extra space between wives
+          yPosition += 10;
         }
       });
     }
     
-    // Children Information
     if (formData.hasChildren && formData.children.length > 0) {
       addSectionHeader('Children Information', 'குழந்தைகளின் தகவல்');
       formData.children.forEach((child, index) => {
@@ -369,12 +359,11 @@ const MultiStepForm = () => {
           }
           
           addField(`Child ${index + 1} WhatsApp`, `குழந்தை ${index + 1} வாட்ஸ்அப்`, child.whatsappNo);
-          yPosition += 10; // Extra space between children
+          yPosition += 10;
         }
       });
     }
     
-    // Generation Information
     if (formData.greatGrandFatherName || formData.greatGrandMotherName || formData.hasAdditionalGeneration) {
       addSectionHeader('Generation Information', 'தலைமுறை தகவல்');
       addField('Great Grandfather\'s Name', 'மூத்த தாத்தாவின் பெயர்', formData.greatGrandFatherName);
@@ -388,7 +377,6 @@ const MultiStepForm = () => {
       }
     }
     
-    // Contact Information Section
     addSectionHeader('Contact Information', 'தொடர்பு தகவல்');
     addField('Address', 'முகவரி', formData.address);
     addField('Mobile Number', 'மொபைல் எண்', formData.mobileNo);
@@ -398,7 +386,6 @@ const MultiStepForm = () => {
     addField('WhatsApp Number', 'வாட்ஸ்அப் எண்', formData.whatsappNo);
     addField('Email ID', 'மின்னஞ்சல் முகவரி', formData.mailId);
     
-    // Footer
     addNewPageIfNeeded(40);
     yPosition = pageHeight - 30;
     doc.setFillColor(59, 130, 246);
@@ -416,13 +403,11 @@ const MultiStepForm = () => {
     setIsSubmitting(true);
     
     try {
-      // Generate PDF
       const pdfDoc = await generatePDF(formData);
       const pdfBlob = pdfDoc.output('blob');
       
       const formDataToSubmit = new FormData();
       
-      // Add PDF to form data
       formDataToSubmit.append('registrationPdf', pdfBlob, 'registration_form.pdf');
       
       formDataToSubmit.append('name', formData.name);
@@ -441,19 +426,15 @@ const MultiStepForm = () => {
       formDataToSubmit.append('hasChildren', formData.hasChildren.toString());
       formDataToSubmit.append('childrenCount', formData.childrenCount.toString());
       
-      // Add wife count
       const wifeCount = formData.wives.filter(wife => wife.name.trim() !== '').length;
       formDataToSubmit.append('wifeCount', wifeCount.toString());
       
-      // Add mother count
-      const motherCount = 1 + formData.mothers.length; // Base mother + additional mothers
+      const motherCount = 1 + formData.mothers.length;
       formDataToSubmit.append('motherCount', motherCount.toString());
       
-      // Add grandmother count
       const grandMotherCount = (formData.grandMotherName ? 1 : 0) + formData.grandMothers.length;
       formDataToSubmit.append('grandMotherCount', grandMotherCount.toString());
       
-      // Add generation count
       const generationCount = formData.hasAdditionalGeneration ? formData.additionalGeneration.length : 0;
       formDataToSubmit.append('generationCount', generationCount.toString());
       
@@ -615,22 +596,24 @@ const MultiStepForm = () => {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4 flex items-center justify-center">
-        <Card className="max-w-2xl w-full shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-12 text-center">
-            <div className="animate-scale-in">
-              <CheckCircle className="w-20 h-20 text-green-500 mx-auto mb-6 animate-pulse" />
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">
-                Registration Successful!
-              </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                Thank you for submitting your registration form. We have received your information successfully.
-              </p>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                <p className="text-green-800 font-medium">
-                  Your registration has been processed and you will be contacted shortly.
-                </p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 px-4 py-6 flex items-center justify-center">
+        <Card className="w-full max-w-md mx-auto shadow-xl border-0 bg-white/95 backdrop-blur-sm rounded-2xl">
+          <CardContent className="p-8 text-center">
+            <div className="animate-bounce mb-6">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CheckCircle className="w-12 h-12 text-green-600" />
               </div>
+            </div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-3">
+              Registration Successful!
+            </h2>
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              Thank you for submitting your registration form. We have received your information successfully.
+            </p>
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+              <p className="text-green-800 font-medium text-sm">
+                Your registration has been processed and you will be contacted shortly.
+              </p>
             </div>
           </CardContent>
         </Card>
@@ -641,79 +624,105 @@ const MultiStepForm = () => {
   return (
     <>
       <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 p-4">
-        <div className="max-w-5xl mx-auto">
-          {/* Banner Image */}
-          <div className="mb-8">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="w-full">
+          <div className="w-full mb-4">
             <img 
-              src="/lovable-uploads/Yuvaraj Sir-01.png"
+              src="./lovable-uploads/Yuvaraj Sir-01.png"
               alt="Banner" 
-              className="w-full h-auto rounded-lg shadow-lg"
+              className="w-full h-auto object-cover rounded-none sm:rounded-lg"
             />
           </div>
 
-          <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-t-lg">
-              <CardTitle className="text-center text-3xl font-light">
-                {stepTitles[currentStep - 1]}
-              </CardTitle>
-              <div className="flex justify-center items-center gap-4 mt-6">
-                <span className="text-sm opacity-90">Progress</span>
-                <Progress value={progress} className="flex-1 max-w-md bg-white/20 h-3" />
-                <span className="text-sm opacity-90">{Math.round(progress)}% Complete</span>
-              </div>
-              <div className="flex justify-center items-center gap-4 mt-2">
-                <span className="text-xs opacity-75">Step {currentStep} of {totalSteps}</span>
-              </div>
-            </CardHeader>
-            
-            <CardContent className="p-8 lg:p-12">
-              {renderStep()}
-              
-              <div className="flex justify-between items-center mt-12 pt-8 border-t">
-                <Button
-                  onClick={prevStep}
-                  disabled={currentStep === 1}
-                  variant="outline"
-                  size="lg"
-                  className="flex items-center gap-2 px-8"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                  Previous
-                </Button>
+          <div className="px-3 sm:px-4 pb-6">
+            <Card className="w-full shadow-2xl border-0 bg-white/95 backdrop-blur-sm rounded-2xl overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white p-4 sm:p-6">
+                <CardTitle className="text-center text-xl sm:text-2xl font-semibold leading-tight">
+                  {stepTitles[currentStep - 1]}
+                </CardTitle>
                 
-                {currentStep < totalSteps ? (
+                <div className="mt-4 space-y-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="text-white/90">Progress</span>
+                    <Progress value={progress} className="flex-1 bg-white/20 h-2.5 rounded-full" />
+                    <span className="text-white/90 text-xs">{Math.round(progress)}%</span>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <div className="flex items-center gap-2">
+                      {[1, 2, 3].map((step) => (
+                        <div key={step} className="flex items-center">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-all ${
+                            step === currentStep 
+                              ? 'bg-white text-purple-600 shadow-lg' 
+                              : step < currentStep 
+                                ? 'bg-green-500 text-white' 
+                                : 'bg-white/20 text-white/70'
+                          }`}>
+                            {step < currentStep ? '✓' : step}
+                          </div>
+                          {step < 3 && <div className={`w-6 h-0.5 mx-1 ${step < currentStep ? 'bg-green-500' : 'bg-white/20'}`} />}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <span className="text-xs text-white/80">Step {currentStep} of {totalSteps}</span>
+                  </div>
+                </div>
+              </CardHeader>
+              
+              <CardContent className="p-4 sm:p-6">
+                <div className="min-h-[60vh]">
+                  {renderStep()}
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8 pt-6 border-t border-gray-100">
                   <Button
-                    onClick={nextStep}
+                    onClick={prevStep}
+                    disabled={currentStep === 1}
+                    variant="outline"
                     size="lg"
-                    className="flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-8"
+                    className="w-full sm:w-auto flex items-center justify-center gap-2 h-12 text-base font-medium rounded-xl border-2 hover:bg-gray-50 disabled:opacity-50"
                   >
-                    Next Step
-                    <ChevronRight className="w-5 h-5" />
+                    <ChevronLeft className="w-5 h-5" />
+                    Previous
                   </Button>
-                ) : (
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    size="lg"
-                    className="flex items-center gap-2 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 px-8 min-w-[150px]"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="w-5 h-5 animate-spin" />
-                        Submitting...
-                      </>
-                    ) : (
-                      <>
-                        Submit Form
-                        <Send className="w-5 h-5" />
-                      </>
-                    )}
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+                  
+                  {currentStep < totalSteps ? (
+                    <Button
+                      onClick={nextStep}
+                      size="lg"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 h-12 text-base font-medium rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg"
+                    >
+                      Next Step
+                      <ChevronRight className="w-5 h-5" />
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={isSubmitting}
+                      size="lg"
+                      className="w-full sm:w-auto flex items-center justify-center gap-2 h-12 text-base font-medium rounded-xl bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg min-w-[160px]"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                          Submitting...
+                        </>
+                      ) : (
+                        <>
+                          Submit Form
+                          <Send className="w-5 h-5" />
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </>
