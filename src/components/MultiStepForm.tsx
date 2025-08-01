@@ -648,12 +648,15 @@ const MultiStepForm = () => {
               
               <div className="text-banner absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 flex items-center justify-center hidden">
                 <div className="text-center px-4">
-                  <h1 className="text-white text-2xl sm:text-3xl md:text-4xl font-bold mb-2 leading-tight">
-                    பதிவு படிவம்
-                  </h1>
-                  <p className="text-white/90 text-lg sm:text-xl font-medium">
-                    REGISTRATION FORM
-                  </p>
+                  <div className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 leading-tight">
+                    <div className="mb-2">அருள்மிகு இருளப்பசாமி குலதெய்வத் திருக்கோவில்</div>
+                    <div className="text-sm sm:text-base md:text-lg mb-2">(அகமுடையர் குலம் - கண்டெடுத்தார், கரப்பழத்தார் கூட்டம்)</div>
+                    <div className="text-sm sm:text-base md:text-lg mb-3">கலங்கல் பாதை, சூலூர் - 641402.</div>
+                  </div>
+                  <div className="text-white/90 text-base sm:text-lg md:text-xl font-semibold">
+                    <div>பரம்பரை</div>
+                    <div>பட்டியலுக்கு தேவைப்படும் விபரங்கள்</div>
+                  </div>
                 </div>
               </div>
             </div>
