@@ -647,15 +647,25 @@ const MultiStepForm = () => {
               />
               
               <div className="text-banner absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 flex items-center justify-center hidden">
-                <div className="text-center px-4">
-                  <div className="text-white text-lg sm:text-xl md:text-2xl font-bold mb-3 leading-tight">
-                    <div className="mb-2">அருள்மிகு இருளப்பசாமி குலதெய்வத் திருக்கோவில்</div>
-                    <div className="text-sm sm:text-base md:text-lg mb-2">(அகமுடையர் குலம் - கண்டெடுத்தார், கரப்பழத்தார் கூட்டம்)</div>
-                    <div className="text-sm sm:text-base md:text-lg mb-3">கலங்கல் பாதை, சூலூர் - 641402.</div>
+                <div className="text-center px-2 sm:px-4 py-2 sm:py-4 w-full max-w-4xl">
+                  <div className="text-white font-bold mb-2 sm:mb-3 leading-tight space-y-1 sm:space-y-2">
+                    <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl break-words hyphens-auto">
+                      அருள்மிகு இருளப்பசாமி குலதெய்வத் திருக்கோவில்
+                    </div>
+                    <div className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg break-words hyphens-auto px-1">
+                      (அகமுடையர் குலம் - கண்டெடுத்தார், கரப்பழத்தார் கூட்டம்)
+                    </div>
+                    <div className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg break-words hyphens-auto">
+                      கலங்கல் பாதை, சூலூர் - 641402.
+                    </div>
                   </div>
-                  <div className="text-white/90 text-base sm:text-lg md:text-xl font-semibold">
-                    <div>பரம்பரை</div>
-                    <div>பட்டியலுக்கு தேவைப்படும் விபரங்கள்</div>
+                  <div className="text-white/90 font-semibold space-y-1 leading-tight">
+                    <div className="text-sm sm:text-base md:text-lg lg:text-xl break-words hyphens-auto">
+                      பரம்பரை
+                    </div>
+                    <div className="text-xs sm:text-sm md:text-base lg:text-lg break-words hyphens-auto">
+                      பட்டியலுக்கு தேவைப்படும் விபரங்கள்
+                    </div>
                   </div>
                 </div>
               </div>
