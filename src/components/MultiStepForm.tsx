@@ -622,55 +622,57 @@ const MultiStepForm = () => {
   }
 
   return (
-    <>
-      <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-        <div className="w-full">
-          <div className="w-full mb-4 relative overflow-hidden">
-            <div className="w-full h-32 sm:h-48 md:h-64 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative">
-              <img 
-                src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Yuvaraj%20Sir-01-rGq8J9vQX8K8vZ4K4vZ4K4vZ4K.png"
-                alt="Registration Banner" 
-                className="w-full h-full object-cover object-center"
-                onError={(e) => {
-                  const img = e.target as HTMLImageElement;
-                  if (img.src.includes('vercel-storage')) {
-                    img.src = '/lovable-uploads/Yuvaraj Sir-01.png';
-                  } else if (img.src.includes('lovable-uploads')) {
-                    img.style.display = 'none';
-                    const textBanner = img.parentElement?.querySelector('.text-banner');
-                    if (textBanner) {
-                      (textBanner as HTMLElement).classList.remove('hidden');
-                    }
+  <>
+    <LoadingOverlay isVisible={isSubmitting} message="Submitting your registration..." />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="w-full">
+        {/* Updated banner container with responsive aspect ratio */}
+        <div className="w-full mb-4 relative overflow-hidden">
+          <div className="w-full aspect-[3.5/1] bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 relative">
+            <img 
+              src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Yuvaraj%20Sir-01-rGq8J9vQX8K8vZ4K4vZ4K4vZ4K.png"
+              alt="Registration Banner" 
+              className="w-full h-full object-contain"
+              onError={(e) => {
+                const img = e.target as HTMLImageElement;
+                if (img.src.includes('vercel-storage')) {
+                  img.src = '/lovable-uploads/Yuvaraj Sir-01.png';
+                } else if (img.src.includes('lovable-uploads')) {
+                  img.style.display = 'none';
+                  const textBanner = img.parentElement?.querySelector('.text-banner');
+                  if (textBanner) {
+                    (textBanner as HTMLElement).classList.remove('hidden');
                   }
-                }}
-              />
-              
-              <div className="text-banner absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 flex items-center justify-center hidden">
-                <div className="text-center px-2 sm:px-4 py-2 sm:py-4 w-full max-w-4xl">
-                  <div className="text-white font-bold mb-2 sm:mb-3 leading-tight space-y-1 sm:space-y-2">
-                    <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl break-words hyphens-auto">
-                      அருள்மிகு இருளப்பசாமி குலதெய்வத் திருக்கோவில்
-                    </div>
-                    <div className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg break-words hyphens-auto px-1">
-                      (அகமுடையர் குலம் - கண்டெடுத்தார், கரப்பழத்தார் கூட்டம்)
-                    </div>
-                    <div className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg break-words hyphens-auto">
-                      கலங்கல் பாதை, சூலூர் - 641402.
-                    </div>
+                }
+              }}
+            />
+            
+            {/* Text banner fallback */}
+            <div className="text-banner absolute inset-0 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 flex items-center justify-center hidden">
+              <div className="text-center px-2 sm:px-4 py-2 sm:py-4 w-full max-w-4xl">
+                <div className="text-white font-bold mb-2 sm:mb-3 leading-tight space-y-1 sm:space-y-2">
+                  <div className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl break-words hyphens-auto">
+                    அருள்மிகு இருளப்பசாமி குலதெய்வத் திருக்கோவில்
                   </div>
-                  <div className="text-white/90 font-semibold space-y-1 leading-tight">
-                    <div className="text-sm sm:text-base md:text-lg lg:text-xl break-words hyphens-auto">
-                      பரம்பரை
-                    </div>
-                    <div className="text-xs sm:text-sm md:text-base lg:text-lg break-words hyphens-auto">
-                      பட்டியலுக்கு தேவைப்படும் விபரங்கள்
-                    </div>
+                  <div className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg break-words hyphens-auto px-1">
+                    (அகமுடையர் குலம் - கண்டெடுத்தார், கரப்பழத்தார் கூட்டம்)
+                  </div>
+                  <div className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-lg break-words hyphens-auto">
+                    கலங்கல் பாதை, சூலூர் - 641402.
+                  </div>
+                </div>
+                <div className="text-white/90 font-semibold space-y-1 leading-tight">
+                  <div className="text-sm sm:text-base md:text-lg lg:text-xl break-words hyphens-auto">
+                    பரம்பரை
+                  </div>
+                  <div className="text-xs sm:text-sm md:text-base lg:text-lg break-words hyphens-auto">
+                    பட்டியலுக்கு தேவைப்படும் விபரங்கள்
                   </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
           <div className="px-3 sm:px-4 pb-6">
             <Card className="w-full shadow-2xl border-0 bg-white/95 backdrop-blur-sm rounded-2xl overflow-hidden">
